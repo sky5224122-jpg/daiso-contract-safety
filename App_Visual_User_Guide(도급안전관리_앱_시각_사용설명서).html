@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>아성다이소 도급 안전관리 앱 - 시각 사용자 매뉴얼 (Visual User Guide)</title>
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --secondary: #d97706;
+      --accent: #dc2626;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding-bottom: 80px; }
+    .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1d4ed8 100%); color: #fff; padding: 36px 20px; text-align: center; }
+    .header .badge { display: inline-block; background: rgba(255,255,255,.18); padding: 5px 14px; border-radius: 999px; font-size: 13px; font-weight: 800; margin-bottom: 12px; }
+    .header h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .header p { font-size: 15px; opacity: 0.9; max-width: 800px; margin: 0 auto; }
+    
+    .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+    
+    /* 빠른 요약 카드 */
+    .summary-card { background: #fff; border-radius: 16px; border: 2px solid #bfdbfe; padding: 24px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,.05); }
+    .summary-card h2 { font-size: 20px; font-weight: 900; color: #1e40af; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .step-pills { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 14px; }
+    .step-pill { background: #f1f5f9; border-radius: 10px; padding: 12px; text-align: center; border: 1px solid #cbd5e1; }
+    .step-pill b { display: block; color: var(--primary); font-size: 15px; margin-bottom: 4px; }
+    .step-pill span { font-size: 12px; color: var(--text-muted); }
+
+    /* 단계별 매뉴얼 카드 */
+    .step-section { background: var(--card-bg); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 40px; box-shadow: 0 6px 20px rgba(15,23,42,.06); }
+    .step-header { padding: 18px 24px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .step-title { display: flex; align-items: center; gap: 12px; }
+    .step-num { background: var(--primary); color: #fff; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; flex-shrink: 0; }
+    .step-header h3 { font-size: 20px; font-weight: 900; color: var(--text); }
+    .step-badge { background: #dbeafe; color: #1e40af; font-size: 12px; font-weight: 800; padding: 4px 12px; border-radius: 999px; }
+
+    .step-body { padding: 24px; }
+    .step-desc { font-size: 15px; color: #334155; margin-bottom: 18px; line-height: 1.7; }
+    .step-action-box { background: #eff6ff; border-left: 4px solid var(--primary); padding: 14px 18px; border-radius: 0 10px 10px 0; margin-bottom: 20px; }
+    .step-action-box b { color: #1e40af; font-size: 14px; }
+
+    /* 이미지 뷰어 박스 */
+    .img-box { background: #0f172a; border-radius: 14px; overflow: hidden; border: 1px solid #334155; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,.15); text-align: center; }
+    .img-box img { width: 100%; height: auto; display: block; border-radius: 12px; }
+    .img-caption { padding: 10px 16px; background: #1e293b; color: #94a3b8; font-size: 12.5px; text-align: left; }
+
+    /* 체크포인트 리스트 */
+    .check-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 14px; }
+    .check-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.5; }
+    .check-item b { color: #0f172a; display: block; margin-bottom: 4px; }
+
+    .btn-link { display: inline-flex; align-items: center; gap: 6px; background: var(--primary); color: #fff; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 13px; margin-top: 10px; }
+    .btn-link:hover { background: var(--primary-dark); }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header class="header">
+    <div class="badge">🛡️ 아성다이소 안전보건팀 · 알기 쉬운 그림 사용설명서</div>
+    <h1>도급 안전관리 웹앱 시각적 사용자 매뉴얼</h1>
+    <p>
+      <b>인테리어/공사/집기(19개사)</b> 및 <b>오픈지원부(5개사) · 매장CS팀(9개사)</b> 도급 안전관리를<br>
+      비개발자도 그림과 순서대로 바로 따라 하실 수 있도록 만든 <b>원스톱 가이드</b>입니다.
+    </p>
+  </header>
+
+  <main class="container">
+
+    <!-- 한눈에 보는 6단계 빠른 요약 -->
+    <section class="summary-card">
+      <h2>📌 30초 만에 끝내는 전체 이용 흐름 요약</h2>
+      <div class="step-pills">
+        <div class="step-pill">
+          <b>1단계: 원클릭 접속</b>
+          <span>파란 버튼 클릭으로 강동현 담당자 즉시 로그인</span>
+        </div>
+        <div class="step-pill">
+          <b>2단계: 업종 선택</b>
+          <span>인테리어 vs 오픈지원/CS 중 원하는 업무 선택</span>
+        </div>
+        <div class="step-pill">
+          <b>3단계: 오픈지원 5개사</b>
+          <span>진열·입고 5사 현황, 공간분리·불법파견 방지</span>
+        </div>
+        <div class="step-pill">
+          <b>4단계: 매장CS 9개사</b>
+          <span>입고 4사(2h 집중) & 재고 5사(야간 실사)</span>
+        </div>
+        <div class="step-pill">
+          <b>5단계: 30문항 실태점검</b>
+          <span>현장 체크리스트, 점수 자동환산, 엑셀 다운</span>
+        </div>
+        <div class="step-pill">
+          <b>6단계: 업종 전환</b>
+          <span>상단 버튼으로 인테리어 19개사 대시보드 전환</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- [1단계] 로그인 화면 및 원클릭 접속 -->
+    <article class="step-section">
+      <div class="step-header">
+        <div class="step-title">
+          <div class="step-num">1</div>
+          <h3>1단계: 로그인 화면 및 원클릭 즉시 접속</h3>
+        </div>
+        <span class="step-badge">처음 화면</span>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          앱 주소에 접속하면 나타나는 첫 화면입니다. 복잡한 아이디/비밀번호 입력이나 Google OAuth 설정 없이도,
+          <b>「👨‍💼 다이소 담당자 접속 (강동현)」</b> 버튼을 누르면 즉시 모든 권한으로 로그인됩니다.
+        </p>
+        <div class="step-action-box">
+          <b>👉 실행 방법:</b> 화면 가운데 파란색 큰 버튼 <b>「👨‍💼 다이소 담당자 접속 · 강동현 (sky5224122@gmail.com)」</b>을 클릭하세요!
+        </div>
+        <div class="img-box">
+          <img src="./User_Guide_Images/01_login_screen.png" alt="1단계: 로그인 화면 및 원클릭 접속">
+          <div class="img-caption">▲ 화면 1: 로그인 화면에서 파란색 버튼을 누르면 담당자로 즉시 접속되며, 하단에는 8개 용역업체 시점 체험 버튼도 제공됩니다.</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- [2단계] 업종 선택 진입 화면 -->
+    <article class="step-section">
+      <div class="step-header">
+        <div class="step-title">
+          <div class="step-num">2</div>
+          <h3>2단계: 로그인 직후 관련 업종 선택</h3>
+        </div>
+        <span class="step-badge">맞춤 진입</span>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          로그인하면 화면 중앙에 <b>「어떤 업종을 관리하시겠습니까?」</b> 팝업 창이 뜹니다.
+          오늘 점검할 업무(인테리어 공사 vs 오픈지원/매장CS 용역)를 클릭 한 번으로 선택해 들어갑니다.
+        </p>
+        <div class="step-action-box">
+          <b>👉 실행 방법:</b> 오픈지원부나 매장CS팀을 점검하실 때는 오른쪽 파란색 <b>「📦 오픈지원 / 입고 / 재고 대시보드 입장」</b> 버튼을 클릭하세요!
+        </div>
+        <div class="img-box">
+          <img src="./User_Guide_Images/02_sector_select_modal.png" alt="2단계: 업종 선택 화면">
+          <div class="img-caption">▲ 화면 2: 좌측 [🏗 인테리어/공사/집기(19개사)] vs 우측 [📦 오픈지원/입고/재고(14개사)] 중 원하는 업종을 선택합니다.</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- [3단계] 오픈지원부 (상품진열 5개사) 화면 -->
+    <article class="step-section">
+      <div class="step-header">
+        <div class="step-title">
+          <div class="step-num">3</div>
+          <h3>3단계: 오픈지원부 (상품진열·입고 5개사) 전원 확인</h3>
+        </div>
+        <span class="step-badge">오픈지원 5개사</span>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          오픈지원부 계약업체 <b>5개사 전원(케이웍스코리아, 에드에그, 유엔아이, 휴먼인프라, 맨토스)</b>이 동등하게 표시됩니다.
+          1일 최대 운영인원(총 570명)과 '26년 상반기 안전보건수준평가 점수, 공간 분리 기준을 확인할 수 있습니다.
+        </p>
+        <div class="step-action-box">
+          <b>🚨 현장 필수 수칙 3가지:</b><br>
+          1. <b>작업지시 일원화:</b> 다이소 직원이 용역 작업자에게 직접 지시 금지 → 반드시 업체 파견 팀장을 통해 지시 (불법파견 방지)<br>
+          2. <b>물리적 공간 분리:</b> 복층 매장은 층별(1F/2F) 분리, 단층 매장은 A/B존 구역 분리<br>
+          3. <b>혼재작업 차단:</b> 인테리어 잔여공사(도장/전기) 종료 후 진열 투입
+        </div>
+        <div class="img-box">
+          <img src="./User_Guide_Images/03_open_support_5_vendors.png" alt="3단계: 오픈지원부 5개사 화면">
+          <div class="img-caption">▲ 화면 3: 오픈지원부 5개사 카드마다 '26년 적격평가 점수(S/A/B), 1일 인원, 공간분리 방법, 취약 보완사항이 정리되어 있습니다.</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- [4단계] 매장CS팀 (입고 4개사 + 재고 5개사) 화면 -->
+    <article class="step-section">
+      <div class="step-header">
+        <div class="step-title">
+          <div class="step-num">4</div>
+          <h3>4단계: 매장CS팀 (입고도우미 4개사 + 재고도우미 5개사 = 총 9개사)</h3>
+        </div>
+        <span class="step-badge">매장CS 9개사</span>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          매장CS팀의 두 가지 특화 용역 업체를 완벽히 구분하여 관리합니다.<br>
+          • <b>[A] 입고도우미 (4개사):</b> 하루 약 2시간 집중 투입 (물류 하차 보조). <b>'25년 69점 미달 탈락한 '엠앤제이' 대신 '26년 '블루키솔루션(95점 S)'으로 교체된 이력이 반영</b>되어 있습니다.<br>
+          • <b>[B] 재고도우미 (5개사):</b> 매장 퇴근시간(22시 폐점) 이후 야간 실사. <b>유미어스(70점 턱걸이) 및 아르테코리아(79점)</b>가 집중 점검 대상으로 표시됩니다.
+        </p>
+        <div class="step-action-box">
+          <b>👉 실행 방법:</b> 상단 서브탭에서 <b>「🛒 매장CS팀 (입고4·재고5 총 9개사)」</b>를 누르고 필터 버튼을 클릭해 보세요.
+        </div>
+        <div class="img-box">
+          <img src="./User_Guide_Images/04_store_cs_9_vendors.png" alt="4단계: 매장CS팀 9개사 화면">
+          <div class="img-caption">▲ 화면 4: 상단 초록색 박스(입고도우미 4사)와 하단 보라색 박스(재고도우미 5사)로 명확히 구분되어 표시됩니다.</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- [5단계] 현장방문 실태점검표 (30문항 & 8대 크로스 인터뷰) -->
+    <article class="step-section">
+      <div class="step-header">
+        <div class="step-title">
+          <div class="step-num">5</div>
+          <h3>5단계: 현장방문 실태점검표 (30문항 & 8대 인터뷰 & 엑셀 다운로드)</h3>
+        </div>
+        <span class="step-badge">현장 점검 핵심</span>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          안전보건팀이 직접 매장 오픈 현장이나 영업 매장에 나갔을 때 <b>무엇을 확인해야 하는지</b> 30개 문항으로 완벽히 정리되어 있습니다.
+          휴대폰이나 태블릿에서 <b>[적합 / 보완 / 부적합]</b> 버튼을 누르면 실시간으로 100점 만점 환산 점수가 계산됩니다.
+        </p>
+        <div class="step-action-box">
+          <b>👉 핵심 기능 3가지:</b><br>
+          1. <b>실시간 점수 계산:</b> 문항을 체크하면 상단에 <b>「88점 / 판정: A등급(양호)」</b>이 즉시 표시됩니다.<br>
+          2. <b>8대 크로스 인터뷰:</b> 용역 작업자, 현장팀장, 매장 점장에게 직접 질문할 필수 질문과 적법/위반 답변 가이드 제공<br>
+          3. <b>엑셀 파일 다운로드:</b> 상단 초록색 <b>「📊 현장점검 엑셀(4시트) 다운로드」</b> 버튼을 누르면 완성된 엑셀 파일이 즉시 다운로드됩니다!
+        </div>
+        <div class="img-box">
+          <img src="./User_Guide_Images/05_field_inspection_30_items.png" alt="5단계: 현장방문 실태점검표 화면">
+          <div class="img-caption">▲ 화면 5: 30문항 체크리스트, 점수 실시간 환산 배너, 4시트 완성형 엑셀 다운로드 버튼, 8대 크로스 인터뷰 가이드</div>
+        </div>
+        <a class="btn-link" href="./Field_Inspection_Checklist(오픈지원부_매장CS팀_도급현장_실태점검표_및_분석자료).xlsx" download>
+          📥 현장 실태점검표 완성형 엑셀 파일(4시트) 다운로드 받기
+        </a>
+      </div>
+    </article>
+
+    <!-- [6단계] 인테리어/공사/집기 19개사 현황 전환 -->
+    <article class="step-section">
+      <div class="step-header">
+        <div class="step-title">
+          <div class="step-num">6</div>
+          <h3>6단계: 상단 [업종선택] 버튼으로 인테리어/공사/집기 19개사 확인</h3>
+        </div>
+        <span class="step-badge">업종 전환</span>
+      </div>
+      <div class="step-body">
+        <p class="step-desc">
+          오픈지원/CS 관리 중 언제든지 화면 상단의 <b>「🔄 업종선택」</b> 버튼을 누르면
+          <b>인테리어팀(마감 9사·사인 5사·냉난방 1사)</b> 및 <b>매장시설관리팀(시설보수 4사)</b> 총 19개 적격업체 대시보드로 즉시 전환됩니다.
+        </p>
+        <div class="step-action-box">
+          <b>👉 실행 방법:</b> 오른쪽 위 헤더의 <b>[🔄 업종선택]</b> 버튼을 누른 뒤 <b>「🏗 인테리어/공사/집기」</b>를 선택하세요!
+        </div>
+        <div class="img-box">
+          <img src="./User_Guide_Images/06_interior_dashboard_19_vendors.png" alt="6단계: 인테리어 19개사 대시보드 화면">
+          <div class="img-caption">▲ 화면 6: 인테리어/공사/집기 19개 적격업체의 평가 점수와 등급, 중점 안전관리 사항이 한눈에 표시됩니다.</div>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+</body>
+</html>

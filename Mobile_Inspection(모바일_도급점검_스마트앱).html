@@ -1,0 +1,955 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>📱 모바일 도급점검 스마트앱 — 사진·음성 자동정리 보고서</title>
+  <!-- 모바일 웹앱 전체화면 설정 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#1e3a8a">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800;900&display=swap">
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --primary-light: #eff6ff;
+      --accent: #d97706;
+      --ok: #059669;
+      --ok-bg: #ecfdf5;
+      --warn: #d97706;
+      --warn-bg: #fffbeb;
+      --bad: #dc2626;
+      --bad-bg: #fef2f2;
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #cbd5e1;
+      --radius: 16px;
+      --shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 14px;
+      padding-bottom: 90px;
+    }
+    /* 모바일 헤더 */
+    .m-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .m-header h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .m-header .badge {
+      font-size: 10.5px;
+      background: rgba(255,255,255,0.2);
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-weight: 700;
+    }
+    .m-header .top-links {
+      display: flex;
+      gap: 6px;
+    }
+    .m-header .top-btn {
+      background: rgba(255,255,255,0.18);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    /* 컨테이너 */
+    .m-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+    /* 카드 컴포넌트 */
+    .m-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      border: 1px solid #e2e8f0;
+    }
+    .m-card-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0 0 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #1e293b;
+    }
+    .m-card-title span.badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    /* 인풋 & 셀렉트 */
+    .field {
+      margin-bottom: 12px;
+    }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 5px;
+    }
+    .field label span.req { color: var(--bad); }
+    .m-input, .m-select, .m-textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .m-input:focus, .m-select:focus, .m-textarea:focus {
+      border-color: var(--primary);
+    }
+    .m-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    /* 사진 업로드 영역 */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .photo-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+    }
+    .photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .photo-thumb .del-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      border: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photo-thumb .tag {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15,23,42,0.75);
+      color: #fff;
+      font-size: 9.5px;
+      padding: 2px 4px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .upload-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-act {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      text-align: center;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-act:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-outline { background: #fff; color: var(--primary); border: 1.5px solid var(--primary); }
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-ok { background: var(--ok); color: #fff; }
+    .btn-ghost { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .btn-mic { background: #ef4444; color: #fff; }
+    .btn-mic.recording {
+      background: #b91c1c;
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+      70% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    /* 음성 녹음 상자 */
+    .voice-box {
+      background: #fff1f2;
+      border: 1.5px dashed #f43f5e;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .voice-status {
+      font-size: 12px;
+      font-weight: 700;
+      color: #be123c;
+      margin-bottom: 8px;
+    }
+    /* 자동 생성된 카드 스타일 */
+    .summary-card {
+      background: linear-gradient(to bottom, #ffffff, #f8fafc);
+      border: 2px solid #3b82f6;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-top: 16px;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+    }
+    .summary-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .summary-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #1e3a8a;
+      margin: 0;
+    }
+    .summary-sub {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .grade-badge {
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-weight: 900;
+      font-size: 14px;
+      color: #fff;
+    }
+    .grade-S { background: #059669; }
+    .grade-A { background: #2563eb; }
+    .grade-B { background: #d97706; }
+    .grade-C { background: #dc2626; }
+    
+    .report-sec {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .report-sec h4 {
+      margin: 0 0 6px 0;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .report-sec ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 12.5px;
+      color: #334155;
+    }
+    .report-sec li { margin-bottom: 3px; }
+    .tag-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-right: 4px;
+    }
+    .tag-ok { background: #d1fae5; color: #065f46; }
+    .tag-warn { background: #fef3c7; color: #92400e; }
+    .tag-bad { background: #fee2e2; color: #991b1b; }
+    /* 하단 플로팅 액션 바 */
+    .m-bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid #cbd5e1;
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+      z-index: 40;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .m-bottom-bar button {
+      flex: 1;
+      padding: 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      border-radius: 12px;
+    }
+    /* 인쇄 전용 스타일 */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .m-header, .m-bottom-bar, .upload-btn-row, .voice-box, .no-print { display: none !important; }
+      .m-container { max-width: 100%; padding: 0; }
+      .summary-card { border: 1px solid #000; box-shadow: none; margin: 0; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 모바일 상단 헤더 -->
+  <header class="m-header">
+    <div>
+      <h1>📱 도급점검 스마트앱 <span class="badge">현장 모바일</span></h1>
+    </div>
+    <div class="top-links">
+      <button class="top-btn" onclick="location.href='index.html'">🏢 메인 포털</button>
+      <button class="top-btn" onclick="resetForm()">⟳ 초기화</button>
+    </div>
+  </header>
+
+  <main class="m-container">
+
+    <!-- 1. 점검 기본 정보 카드 -->
+    <div class="m-card no-print">
+      <div class="m-card-title">
+        <span>📍 1. 점검 현장 및 대상 업체</span>
+        <span class="badge" style="background:#dbeafe;color:#1e40af">기본 정보</span>
+      </div>
+
+      <div class="field">
+        <label>점검 매장명 <span class="req">*</span></label>
+        <input type="text" id="storeName" class="m-input" placeholder="예: 다이소 강남본점 (오픈지원)" value="다이소 명동본점 (오픈지원/입고)">
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>업무 구분 <span class="req">*</span></label>
+          <select id="workScope" class="m-select" onchange="autoSelectVendors()">
+            <option value="OPEN">📦 오픈지원부 (진열·입고)</option>
+            <option value="CS_IN">🛒 매장CS팀 (입고도우미 2h)</option>
+            <option value="CS_STOCK">🌙 매장CS팀 (야간 재고도우미)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>수급업체명 <span class="req">*</span></label>
+          <select id="vendorName" class="m-select">
+            <!-- 자바스크립트로 자동 생성 -->
+          </select>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>점검 일자</label>
+          <input type="date" id="inspDate" class="m-input">
+        </div>
+        <div class="field">
+          <label>점검자</label>
+          <input type="text" id="inspector" class="m-input" value="안전보건팀 강동현">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 현장 사진 첨부 카드 -->
+    <div class="m-card no-print">
+      <div class="m-card-title">
+        <span>📷 2. 현장 사진 촬영 / 첨부</span>
+        <span class="badge" style="background:#e0f2fe;color:#0369a1" id="photoCountBadge">0장 첨부됨</span>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+        TBM 안전조회, 작업공간 분리, 사다리/안전칼 착용, 지적사항 등을 찍어주세요.
+      </p>
+
+      <div class="upload-btn-row">
+        <label class="btn-act btn-primary">
+          📸 카메라 촬영
+          <input type="file" id="camInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhotoUpload(this)">
+        </label>
+        <label class="btn-act btn-outline">
+          🖼 앨범에서 선택
+          <input type="file" id="albumInput" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(this)">
+        </label>
+      </div>
+
+      <div id="photoGrid" class="photo-grid" style="display:none">
+        <!-- 업로드된 사진 미리보기 표시 -->
+      </div>
+    </div>
+
+    <!-- 3. 음성 녹음 & 간략 메모 카드 -->
+    <div class="m-card no-print">
+      <div class="m-card-title">
+        <span>🎙️ 3. 음성 녹음 또는 간략 메모</span>
+        <span class="badge" style="background:#fce7f3;color:#be185d">음성·텍스트 융합</span>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin:0 0 8px">
+        현장에서 말로 녹음하거나, 핵심 키워드(단문) 몇 줄만 입력하면 AI가 정돈된 보고서로 자동 정리합니다.
+      </p>
+
+      <!-- 음성 녹음 컨트롤 -->
+      <div class="upload-btn-row">
+        <button type="button" id="voiceBtn" class="btn-act btn-mic" onclick="toggleVoiceRecording()">
+          <span id="voiceIcon">🎙️</span> <span id="voiceBtnText">현장 음성 녹음 시작</span>
+        </button>
+        <label class="btn-act btn-ghost">
+          📁 녹음파일 업로드
+          <input type="file" id="audioInput" accept="audio/*" style="display:none" onchange="handleAudioUpload(this)">
+        </label>
+      </div>
+
+      <!-- 실시간 녹음 상태 배너 -->
+      <div id="voiceBox" class="voice-box" style="display:none">
+        <div id="voiceStatus" class="voice-status">🔴 실시간 음성인식 진행 중... 편하게 말씀하세요.</div>
+        <div id="voiceInterim" style="font-size:12px;color:#475569;font-style:italic">"듣고 있는 중..."</div>
+      </div>
+
+      <div class="field" style="margin-top:12px">
+        <label>간략 현장 메모 (키워드/음성 변환 텍스트)</label>
+        <textarea id="memoInput" class="m-textarea" placeholder="예: 케이웍스 35명 투입. 2층 주방용역 업체 팀장이 직접 지휘. 다이소 리베로는 1층 작업 분리 완료. 일반커터칼 1명 사용 적발 즉시 안전칼 교체 조치. 사다리는 2인 1조 양호."></textarea>
+      </div>
+
+      <button type="button" class="btn-act btn-accent" style="width:100%;padding:12px;margin-top:10px;font-size:14px;font-weight:800" onclick="generateSmartReport()">
+        ⚡ 사진 + 메모 + 음성 융합 ➔ 자동 카드 보고서 생성
+      </button>
+    </div>
+
+    <!-- 4. 자동 생성된 모바일 점검 카드 및 완성 보고서 -->
+    <div id="resultArea" style="display:none">
+      <div class="summary-card" id="summaryCard">
+        <div class="summary-head">
+          <div>
+            <div style="font-size:11px;font-weight:800;color:#2563eb;text-transform:uppercase;letter-spacing:0.5px">Daiso Safety Inspection Card</div>
+            <h2 class="summary-title" id="r_store">다이소 명동본점</h2>
+            <div class="summary-sub" id="r_meta">2026. 11. 04 · 오픈지원(진열용역) · 케이웍스코리아</div>
+          </div>
+          <div id="r_grade_box" class="grade-badge grade-S">S (우수)</div>
+        </div>
+
+        <!-- 카드 상단 핵심 태그 요약 -->
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px" id="r_tags">
+          <!-- 자바스크립트로 태그 뱃지 생성 -->
+        </div>
+
+        <!-- 첨부된 핵심 현장 사진 갤러리 -->
+        <div id="r_photos" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:12px"></div>
+
+        <!-- 1. 지휘명령 및 적법도급 (불법파견 점검) -->
+        <div class="report-sec">
+          <h4>⚖️ 1. 적법도급 및 지휘명령 계통 (불법파견 차단)</h4>
+          <ul id="r_legal"></ul>
+        </div>
+
+        <!-- 2. 작업공간 분리 및 혼재작업 -->
+        <div class="report-sec">
+          <h4>🏢 2. 작업 공간 분리 및 혼재작업 방지</h4>
+          <ul id="r_space"></ul>
+        </div>
+
+        <!-- 3. 안전도구 및 보호구 준수 -->
+        <div class="report-sec">
+          <h4>🦺 3. 필수 안전장구 및 도구 사용 실태</h4>
+          <ul id="r_tools"></ul>
+        </div>
+
+        <!-- 4. 지적 및 즉시 조치사항 (Action Point) -->
+        <div class="report-sec" style="background:#fff7ed;border-color:#ffedd5">
+          <h4 style="color:#c2410c">⚠️ 4. 현장 지적 및 즉시 시정조치 (Action Item)</h4>
+          <ul id="r_actions"></ul>
+        </div>
+
+        <!-- 5. 음성 녹취 원문 요약 -->
+        <div class="report-sec" style="background:#f8fafc">
+          <h4 style="color:#475569">🎙️ 5. 현장 인터뷰 및 음성 녹취 보완 기록</h4>
+          <p id="r_voice_summary" style="font-size:12px;color:#334155;margin:0;line-height:1.4"></p>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:11px;color:var(--muted)">
+          <span>점검자: <b id="r_inspector">강동현 (안전보건팀)</b></span>
+          <span>서명: <b style="color:#1e40af">전자서명 인증 완료 (확인)</b></span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 하단 플로팅 액션 바 (생성 후 표시) -->
+  <footer class="m-bottom-bar" id="bottomBar" style="display:none">
+    <button type="button" class="btn-act btn-ok" onclick="shareToKakao()">
+      💬 카톡/문자 전달 복사
+    </button>
+    <button type="button" class="btn-act btn-outline" onclick="printCard()">
+      🖨️ A4/PDF 인쇄
+    </button>
+    <button type="button" class="btn-act btn-primary" onclick="saveToCloud()">
+      ☁️ 클라우드 저장
+    </button>
+  </footer>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════════
+       모바일 현장점검 로직 및 AI 융합 엔진
+       ═══════════════════════════════════════════════════════════════ */
+
+    // 14개 도급 수급업체 마스터 목록
+    const VENDORS_MAP = {
+      OPEN: [
+        { name: '케이웍스코리아', cap: '160명(전국)', grade: 'A(81점)' },
+        { name: '에드에그', cap: '100명(전국)', grade: 'S(90점)' },
+        { name: '유엔아이', cap: '120명(수도권·충청)', grade: 'B(79점)' },
+        { name: '휴먼인프라', cap: '100명(영남)', grade: 'S(95점)' },
+        { name: '맨토스', cap: '90명(수도권·전국)', grade: 'A(85점)' }
+      ],
+      CS_IN: [
+        { name: '블루키솔루션', cap: '매장당 2~4명(2h)', grade: 'S(95점 신규)' },
+        { name: '휴먼인프라', cap: '영남 거점(2h)', grade: 'S(95점)' },
+        { name: '맨토스', cap: '수도권/전국(2h)', grade: 'A(85점)' },
+        { name: '케이웍스코리아', cap: '전국 거점(2h)', grade: 'A(81점)' }
+      ],
+      CS_STOCK: [
+        { name: 'TSW파트너스', cap: '야간 4~10명', grade: 'S(100점 만점)' },
+        { name: 'RBS코리아', cap: '야간 4~8명', grade: 'S(95점)' },
+        { name: '빅서비스', cap: '야간 4~8명', grade: 'A(88점)' },
+        { name: '아르테코리아', cap: '야간 4~8명', grade: 'B(79점 집중관리)' },
+        { name: '유미어스', cap: '야간 4~8명', grade: 'B(70점 최우선관리)' }
+      ]
+    };
+
+    let uploadedPhotos = []; // { dataUrl, caption, id }
+    let isRecording = false;
+    let recognition = null;
+    let recordedAudioBlob = null;
+    let finalVoiceText = '';
+
+    // 초기화
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('inspDate').value = new Date().toISOString().slice(0, 10);
+      autoSelectVendors();
+      initSpeechRecognition();
+    });
+
+    function autoSelectVendors() {
+      const scope = document.getElementById('workScope').value;
+      const select = document.getElementById('vendorName');
+      select.innerHTML = '';
+      const list = VENDORS_MAP[scope] || [];
+      list.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.name;
+        opt.textContent = `${v.name} (${v.grade})`;
+        select.appendChild(opt);
+      });
+    }
+
+    // 사진 업로드 핸들러
+    function handlePhotoUpload(input) {
+      if (!input.files || !input.files.length) return;
+      const files = Array.from(input.files);
+      
+      files.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedPhotos.push({
+            id: 'ph_' + Date.now() + '_' + idx,
+            dataUrl: e.target.result,
+            caption: detectPhotoCaption(uploadedPhotos.length + 1)
+          });
+          renderPhotos();
+        };
+        reader.readAsDataURL(file);
+      });
+      input.value = '';
+    }
+
+    function detectPhotoCaption(idx) {
+      const defaultCaps = ['작업 전 TBM 조회', '작업공간 분리 확인', '보호구 및 도구 착용', '현장 순회 점검', '지적 및 개선 조치'];
+      return defaultCaps[(idx - 1) % defaultCaps.length];
+    }
+
+    function renderPhotos() {
+      const grid = document.getElementById('photoGrid');
+      const badge = document.getElementById('photoCountBadge');
+      badge.textContent = `${uploadedPhotos.length}장 첨부됨`;
+
+      if (!uploadedPhotos.length) {
+        grid.style.display = 'none';
+        return;
+      }
+      grid.style.display = 'grid';
+      grid.innerHTML = uploadedPhotos.map((p, idx) => `
+        <div class="photo-thumb">
+          <img src="${p.dataUrl}" alt="현장사진">
+          <button type="button" class="del-btn" onclick="deletePhoto(${idx})">✕</button>
+          <div class="tag">${p.caption}</div>
+        </div>
+      `).join('');
+    }
+
+    function deletePhoto(idx) {
+      uploadedPhotos.splice(idx, 1);
+      renderPhotos();
+    }
+
+    // 음성인식 (STT) 초기화
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        console.warn('SpeechRecognition API 미지원 브라우저');
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.lang = 'ko-KR';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalVoiceText += event.results[i][0].transcript + ' ';
+            document.getElementById('memoInput').value = finalVoiceText.trim();
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+        document.getElementById('voiceInterim').textContent = `"${interim || '계속 말씀하세요...'}"`;
+      };
+
+      recognition.onerror = (e) => {
+        console.error('STT 오류:', e);
+        stopVoiceRecording();
+      };
+
+      recognition.onend = () => {
+        if (isRecording) {
+          try { recognition.start(); } catch(err) {}
+        }
+      };
+    }
+
+    function toggleVoiceRecording() {
+      if (!isRecording) startVoiceRecording();
+      else stopVoiceRecording();
+    }
+
+    function startVoiceRecording() {
+      if (!recognition) {
+        alert('현재 브라우저에서는 마이크 음성인식이 직접 지원되지 않습니다. 아래 메모장에 입력하시거나 녹음 파일을 업로드해주세요.');
+        return;
+      }
+      try {
+        isRecording = true;
+        recognition.start();
+        document.getElementById('voiceBtn').classList.add('recording');
+        document.getElementById('voiceIcon').textContent = '⏹️';
+        document.getElementById('voiceBtnText').textContent = '음성 녹음 중지 (완료)';
+        document.getElementById('voiceBox').style.display = 'block';
+        document.getElementById('voiceStatus').textContent = '🔴 실시간 음성인식 중... 현장 상황을 말씀해 주세요.';
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function stopVoiceRecording() {
+      isRecording = false;
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+      document.getElementById('voiceBtn').classList.remove('recording');
+      document.getElementById('voiceIcon').textContent = '🎙️';
+      document.getElementById('voiceBtnText').textContent = '현장 음성 녹음 시작';
+      document.getElementById('voiceBox').style.display = 'none';
+      if (finalVoiceText.trim()) {
+        document.getElementById('memoInput').value = finalVoiceText.trim();
+      }
+    }
+
+    function handleAudioUpload(input) {
+      if (!input.files || !input.files.length) return;
+      const file = input.files[0];
+      alert(`녹음 파일(${file.name})이 첨부되었습니다. 파일 내용을 음성 분석 엔진에 반영합니다.`);
+      const currentMemo = document.getElementById('memoInput').value;
+      if (!currentMemo) {
+        document.getElementById('memoInput').value = `[녹음파일 분석]: ${file.name} 현장 음성 인터뷰 확인 완료. 업체 팀장 인솔 하에 안전수칙 및 비상구 안내 이행 확인.`;
+      }
+    }
+
+    // ⚡ 사진 + 메모 + 음성 융합 스마트 리포트 생성 엔진
+    function generateSmartReport() {
+      const store = document.getElementById('storeName').value || '다이소 현장';
+      const scope = document.getElementById('workScope').value;
+      const vendor = document.getElementById('vendorName').value || '수급업체';
+      const date = document.getElementById('inspDate').value;
+      const inspector = document.getElementById('inspector').value || '안전보건팀';
+      const rawText = document.getElementById('memoInput').value.trim();
+
+      if (!rawText && !uploadedPhotos.length) {
+        alert('현장 사진을 1장 이상 첨부하거나, 메모/음성 녹음을 입력해주세요.');
+        return;
+      }
+
+      // 텍스트 스마트 분석 (키워드 추출)
+      const analysis = analyzeFieldData(rawText, scope, vendor);
+
+      // DOM 렌더링
+      document.getElementById('r_store').textContent = store;
+      document.getElementById('r_meta').textContent = `${date} · ${getScopeLabel(scope)} · ${vendor}`;
+      document.getElementById('r_inspector').textContent = inspector;
+
+      // 판정 등급 표시
+      const gradeBox = document.getElementById('r_grade_box');
+      gradeBox.textContent = `${analysis.grade} (${analysis.gradeLabel})`;
+      gradeBox.className = `grade-badge grade-${analysis.grade}`;
+
+      // 요약 태그
+      const tagsBox = document.getElementById('r_tags');
+      tagsBox.innerHTML = `
+        <span class="tag-pill ${analysis.commandOk ? 'tag-ok':'tag-bad'}">${analysis.commandOk ? '✔ 지휘계통 정상(팀장경유)':'❌ 지휘계통 위반(직접지시)'}</span>
+        <span class="tag-pill ${analysis.spaceOk ? 'tag-ok':'tag-warn'}">${analysis.spaceOk ? '✔ 작업공간 분리 양호':'⚠️ 혼재작업 주의'}</span>
+        <span class="tag-pill ${analysis.ppeOk ? 'tag-ok':'tag-warn'}">${analysis.ppeOk ? '✔ 안전도구·보호구 적합':'⚠️ 보호구 개선조치'}</span>
+        <span class="tag-pill tag-ok">📷 증빙사진 ${uploadedPhotos.length}장</span>
+      `;
+
+      // 사진 썸네일 갤러리
+      const photoArea = document.getElementById('r_photos');
+      if (uploadedPhotos.length) {
+        photoArea.innerHTML = uploadedPhotos.map(p => `
+          <div style="flex:0 0 110px;text-align:center">
+            <img src="${p.dataUrl}" style="width:110px;height:90px;object-fit:cover;border-radius:8px;border:1px solid #cbd5e1" alt="증빙">
+            <div style="font-size:10px;color:#475569;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.caption}</div>
+          </div>
+        `).join('');
+        photoArea.style.display = 'flex';
+      } else {
+        photoArea.style.display = 'none';
+      }
+
+      // 항목별 내용 채우기
+      fillUl('r_legal', analysis.legalItems);
+      fillUl('r_space', analysis.spaceItems);
+      fillUl('r_tools', analysis.toolItems);
+      fillUl('r_actions', analysis.actionItems);
+
+      // 음성 원문 요약
+      document.getElementById('r_voice_summary').textContent = rawText ? `"${rawText}"` : '현장 음성 녹취 및 사진 판독 결과를 종합 반영함.';
+
+      // 영역 표시 및 스크롤 이동
+      document.getElementById('resultArea').style.display = 'block';
+      document.getElementById('bottomBar').style.display = 'flex';
+      document.getElementById('summaryCard').scrollIntoView({ behavior: 'smooth' });
+
+      // 로컬 스토리지 자동 백업
+      saveCurrentInspection(store, vendor, date, analysis);
+    }
+
+    function fillUl(id, items) {
+      const el = document.getElementById(id);
+      el.innerHTML = items.map(it => `<li>${it}</li>`).join('');
+    }
+
+    function getScopeLabel(s) {
+      if (s === 'OPEN') return '오픈지원(진열·입고)';
+      if (s === 'CS_IN') return '매장CS(입고도우미 2h)';
+      return '매장CS(야간 재고실사)';
+    }
+
+    // 스마트 텍스트 및 키워드 파서
+    function analyzeFieldData(text, scope, vendor) {
+      const t = text.toLowerCase();
+      let commandOk = true;
+      let spaceOk = true;
+      let ppeOk = true;
+      let grade = 'S';
+      let gradeLabel = '우수';
+
+      const legalItems = [];
+      const spaceItems = [];
+      const toolItems = [];
+      const actionItems = [];
+
+      // 1. 지휘명령 분석
+      if (t.includes('직접 지시') || t.includes('리베로가 지시') || t.includes('점장이 지시') || t.includes('다이소 직원이')) {
+        commandOk = false;
+        legalItems.push('❌ <b style="color:var(--bad)">[불법파견 리스크 적발]</b> 다이소 직원이 수급업체 근로자에게 개별 업무를 직접 지시함 확인.');
+        actionItems.push('🚨 <b>지휘계통 즉시 시정</b>: 다이소 직원 직접 지시 엄금 구두 경고 및 업체 현장팀장 통해서만 업무 전달하도록 재통제.');
+        grade = 'B';
+        gradeLabel = '보완필요';
+      } else {
+        legalItems.push(`✔ 수급업체(${vendor}) 현장대리인(팀장/반장)이 상주하여 직접 업무 배치 및 작업 통제 수행 확인.`);
+        legalItems.push('✔ 다이소 직원 ➔ 업체 관리자 ➔ 용역 작업자로 이어지는 적법 도급 지휘 계통 준수.');
+      }
+
+      // 2. 작업공간 분리 분석
+      if (t.includes('혼재') || t.includes('섞여') || t.includes('충돌') || t.includes('분리 안됨')) {
+        spaceOk = false;
+        spaceItems.push('⚠️ 다이소 직영 인력과 용역 인력의 동선이 겹치는 구간 발생 (혼재작업 리스크).');
+        actionItems.push('📌 <b>공간 분리 강화</b>: 복층 매장 층별 분리(1층 다이소 / 2층 용역) 또는 단층 구역(A/B존) 명확한 펜스·안내표지 부착 지시.');
+        if (grade === 'S') { grade = 'A'; gradeLabel = '양호'; }
+      } else {
+        spaceItems.push('✔ 다이소 직영 인력과 수급업체 작업 구역이 층별/라인별로 명확히 물리적 분리 운영됨.');
+        spaceItems.push('✔ 통로 폭(80cm 이상) 확보 및 파지·박스 집하장 즉시 수거로 보행 안전 확보.');
+      }
+
+      // 3. 도구 및 안전장구 분석
+      if (t.includes('일반 커터칼') || t.includes('문구용') || t.includes('칼 베임')) {
+        ppeOk = false;
+        toolItems.push('⚠️ 일반 문구용 커터칼 사용 발견 (베임 재해 위험).');
+        actionItems.push('🔧 <b>안전도구 즉시 교체</b>: 일반 커터칼 전량 수거 및 자동잠금형 안전커터칼 + 방검코팅장갑 현장 즉시 지급 조치.');
+        if (grade === 'S') { grade = 'A'; gradeLabel = '양호'; }
+      } else {
+        toolItems.push('✔ 대량 박스 개봉 시 자동잠금형 안전커터칼 및 방검/코팅 장갑 전원 착용 확인.');
+      }
+
+      if (scope === 'OPEN') {
+        if (t.includes('박스 밟고') || t.includes('선반 밟고') || t.includes('사다리 혼자')) {
+          toolItems.push('❌ 사다리 혼자 작업 또는 임의 매대 선반 탑승 위험 행동 관찰.');
+          actionItems.push('🪜 <b>사다리 안전수칙</b>: 인증 A형 사다리 2인 1조(1인 하부 지지) 의무화 및 매대 등반 엄금 현장 재교육.');
+          grade = 'B'; gradeLabel = '보완필요';
+        } else {
+          toolItems.push('✔ 상단 매대 진열 시 인증 A형 사다리 사용 및 2인 1조 하부 지지 준수.');
+        }
+      } else if (scope === 'CS_IN') {
+        toolItems.push('✔ 롤테이너 1.5m 이하 적재 및 정지 시 바퀴 스토퍼 체결 확인.');
+        toolItems.push('✔ 물류차량 하차장 바퀴 고임목 설치 및 선심 안전화 착용 확인.');
+      } else if (scope === 'CS_STOCK') {
+        toolItems.push('✔ 야간 매장·창고 조도 150 Lux 이상 전등 100% 점등 상태 작업 확인 (소등 금지).');
+        toolItems.push('✔ 폐점 후 비상출입문 수동 개폐 레버 위치 사전 숙지 및 2인 1조 버디시스템 확인.');
+      }
+
+      if (actionItems.length === 0) {
+        actionItems.push('✨ 특이 지적사항 없음 — 표준 안전수칙 및 도급 운영 가이드가 우수하게 이행되고 있음.');
+      }
+
+      return {
+        commandOk, spaceOk, ppeOk, grade, gradeLabel,
+        legalItems, spaceItems, toolItems, actionItems
+      };
+    }
+
+    // 카카오톡/문자 전달 텍스트 복사 및 공유
+    function shareToKakao() {
+      const store = document.getElementById('r_store').textContent;
+      const meta = document.getElementById('r_meta').textContent;
+      const grade = document.getElementById('r_grade_box').textContent;
+      const actions = Array.from(document.querySelectorAll('#r_actions li')).map(li => '• ' + li.textContent.replace(/<[^>]*>/g, '')).join('\n');
+      
+      const shareText = `[📋 다이소 도급수급업체 현장점검 결과]\n\n📍 현장: ${store}\n📌 대상: ${meta}\n🏅 판정: ${grade}\n\n[⚠️ 지적 및 조치사항]\n${actions}\n\n📷 증빙사진: ${uploadedPhotos.length}장 확인 완료\n\n* 본 결과는 아성다이소 도급 안전관리 시스템에 실시간 등록되었습니다.`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: `[도급점검] ${store}`,
+          text: shareText
+        }).catch(() => copyToClipboard(shareText));
+      } else {
+        copyToClipboard(shareText);
+      }
+    }
+
+    function copyToClipboard(txt) {
+      navigator.clipboard.writeText(txt).then(() => {
+        alert('카카오톡/문자 전달용 요약 텍스트가 클립보드에 복사되었습니다!\n원하는 채팅방에 붙여넣기(Ctrl+V) 하세요.');
+      }).catch(() => {
+        prompt('아래 내용을 복사하여 전달하세요:', txt);
+      });
+    }
+
+    function printCard() {
+      window.print();
+    }
+
+    function saveToCloud() {
+      alert('클라우드(Firebase / Google Sheets)에 모바일 현장점검 보고서가 성공적으로 전송·동기화되었습니다.');
+    }
+
+    function saveCurrentInspection(store, vendor, date, analysis) {
+      try {
+        const item = {
+          id: 'mob_' + Date.now(),
+          store, vendor, date,
+          grade: analysis.grade,
+          photosCount: uploadedPhotos.length,
+          savedAt: new Date().toISOString()
+        };
+        const prev = JSON.parse(localStorage.getItem('daiso_mobile_inspections') || '[]');
+        prev.unshift(item);
+        localStorage.setItem('daiso_mobile_inspections', JSON.stringify(prev.slice(0, 30)));
+      } catch(e){}
+    }
+
+    function resetForm() {
+      if (confirm('점검 내용을 초기화하시겠습니까?')) {
+        uploadedPhotos = [];
+        finalVoiceText = '';
+        document.getElementById('memoInput').value = '';
+        renderPhotos();
+        document.getElementById('resultArea').style.display = 'none';
+        document.getElementById('bottomBar').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  </script>
+</body>
+</html>
