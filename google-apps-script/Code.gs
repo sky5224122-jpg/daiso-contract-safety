@@ -48,15 +48,23 @@ function initSheets_(ss) {
 }
 
 function doGet(e) {
-  const action = (e && e.parameter && e.parameter.action) || 'status';
-  const out = {
-    ok: true,
-    service: '아성다이소 도급안전관리 통합 백엔드 (오픈지원 5개사 · 매장CS 9개사 · 인테리어 19개사)',
-    owner: '안전보건팀 강동현 (sky5224122@gmail.com)',
-    action: action,
-    timestamp: new Date().toISOString()
-  };
-  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+  const action = (e && e.parameter && e.parameter.action) || '';
+  if (action === 'json' || action === 'api') {
+    const out = {
+      ok: true,
+      service: '아성다이소 도급안전관리 통합 백엔드 (오픈지원 5개사 · 매장CS 9개사 · 인테리어 19개사)',
+      owner: '안전보건팀 강동현 (sky5224122@gmail.com)',
+      action: action,
+      timestamp: new Date().toISOString()
+    };
+    return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // 일반 브라우저 접속 시 번들링된 웹앱 화면 직접 서비스 (모바일 & PC 완벽 반응형)
+  return HtmlService.createHtmlOutputFromFile('app')
+    .setTitle('아성다이소 도급 안전관리 시스템 (오픈지원부 5개사 · 매장CS팀 9개사 · 인테리어 19개사)')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function doPost(e) {
