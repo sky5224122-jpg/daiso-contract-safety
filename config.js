@@ -9,6 +9,6 @@ window.FIREBASE_CONFIG = {
 };
 // 사진·서류·메일·PDF 및 실태점검 담당 중계 Apps Script 주소 (프로젝트: "아성다이소_도급안전관리_오픈지원5사_매장CS9사_실태점검")
 window.APP_CONFIG = {
-  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbwONYlU38yRU5m_tibVeJ89fFnVQyFryhfLAE_97DiM73EW2T6UjPLaat5dG1A4J02idw/exec',
-  GAS_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbwONYlU38yRU5m_tibVeJ89fFnVQyFryhfLAE_97DiM73EW2T6UjPLaat5dG1A4J02idw/exec'
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxVPG4w5y52Qi7Ymu46njAJjf1SX1aMV2kHlNS5Bs8CB2X6AX9Av6pJLw_Hww4vjkUnsg/exec',
+  GAS_WEBAPP_URL: 'https://script.google.com/macros/s/AKfycbxVPG4w5y52Qi7Ymu46njAJjf1SX1aMV2kHlNS5Bs8CB2X6AX9Av6pJLw_Hww4vjkUnsg/exec'
 };

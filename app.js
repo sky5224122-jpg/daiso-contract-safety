@@ -1030,6 +1030,8 @@ function openTestSwitchModal(){
   ['VENDOR','tsw@vendor.test','👷 TSW파트너스 (매장CS 재고도우미 · 야간 실사 · 100점 S)','퇴근시간 이후(22시~) 야간 재고현황 파악 · 적격평가 만점'],
   ['VENDOR','arte@vendor.test','👷 아르테코리아 (매장CS 재고도우미 · 야간 실사 · 79점 B)','야간 재고실사 · 보호구/위험성평가/비상대책 보완 대상'],
   ['VENDOR','yumeus@vendor.test','👷 유미어스 (매장CS 재고도우미 · 야간 실사 · 70점 B)','야간 재고실사 · 적격 커트라인(70점) 최우선 현장점검 대상'],
+  ['VENDOR','sunghyun@vendor.test','🛠 성현기업 (매장개선부 집기 91점 S)','매장 진열대 및 창고 경량랙 제작·납품·설치·철거·재배치'],
+  ['VENDOR','yeowoo@vendor.test','🛠 예우시스템 (매장개선부 집기 89점 A)','상품 진열대(곤돌라) 및 벽면 선반 설치·보수·철거'],
   ['VENDOR','sigong@vendor.test','👷 (주)시공디자인 (인테리어팀 마감공사 · 92점 S)','인테리어/공사/집기 대표 시공사 · 강남본점 800평 리뉴얼']
  ];
  const bg=document.createElement('div');bg.id='testSwitchDlg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');

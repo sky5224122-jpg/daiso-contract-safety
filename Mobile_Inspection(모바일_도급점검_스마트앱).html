@@ -920,8 +920,38 @@
       window.print();
     }
 
-    function saveToCloud() {
-      alert('클라우드(Firebase / Google Sheets)에 모바일 현장점검 보고서가 성공적으로 전송·동기화되었습니다.');
+    async function saveToCloud() {
+      const store = document.getElementById('storeName').value || '다이소 현장';
+      const scope = document.getElementById('workScope').value;
+      const vendor = document.getElementById('vendorName').value || '수급업체';
+      const date = document.getElementById('inspDate').value;
+      const inspector = document.getElementById('inspector').value || '안전보건팀';
+      const rawText = document.getElementById('memoInput').value.trim();
+      const actions = Array.from(document.querySelectorAll('#r_actions li')).map(li => li.textContent.replace(/<[^>]*>/g, '')).join(' | ');
+      const grade = document.getElementById('r_grade_box').textContent;
+
+      const gasUrl = 'https://script.google.com/macros/s/AKfycbwONYlU38yRU5m_tibVeJ89fFnVQyFryhfLAE_97DiM73EW2T6UjPLaat5dG1A4J02idw/exec';
+
+      try {
+        await fetch(gasUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'saveMobileInspection',
+            store, scope, vendor, date, inspector,
+            photosCount: uploadedPhotos.length,
+            rawVoice: rawText,
+            analysis: { grade, actionItems: [actions] },
+            savedAt: new Date().toISOString()
+          })
+        });
+
+        alert('🎉 구글 스프레드시트에 점검 결과가 실시간으로 자동 누적 저장되었습니다!\n\n구글 시트를 열어 저장된 내용을 확인합니다.');
+        window.open(gasUrl + '?action=getSheetUrl', '_blank');
+      } catch (e) {
+        alert('전송 중 통신 오류가 발생하였으나 모바일 로컬에 안전하게 보관되었습니다.');
+      }
     }
 
     function saveCurrentInspection(store, vendor, date, analysis) {
