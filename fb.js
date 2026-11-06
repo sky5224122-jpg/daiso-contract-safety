@@ -314,7 +314,34 @@
       };
     });
     // 오픈지원부 및 매장CS팀 부서 담당자 샘플 구성원
-    store.ORG_MEMBERS['M-OPEN1'] = { id: 'M-OPEN1', unitId: 'U-OPEN', name: '김오픈', title: '오픈지원부장', phone: '010-1111-2222', companyEmail: 'open.kim@daiso.co.kr', gmail: 'open.kim@gmail.com', role: 'CLIENT', createdAt: now() };
+    // 오픈지원부 6개 팀 29명 실무 운영 담당자 등록
+    OPEN_SUPPORT_ROSTER.forEach((m) => {
+      store.STAFF[m.loginEmail] = {
+        id: m.loginEmail,
+        name: m.name,
+        dept: '오픈지원부 ' + m.team,
+        sector: 'OPEN',
+        role: 'STAFF',
+        companyEmail: m.companyEmail,
+        loginEmail: m.loginEmail,
+        active: 'Y',
+        title: m.title,
+        phone: m.phone,
+        createdBy: 'SYSTEM',
+        createdAt: now()
+      };
+      store.ORG_MEMBERS[m.id] = {
+        id: m.id,
+        unitId: m.unitId,
+        name: m.name,
+        title: m.title,
+        phone: m.phone,
+        companyEmail: m.companyEmail,
+        gmail: m.loginEmail,
+        role: 'STAFF',
+        createdAt: now()
+      };
+    });
     store.ORG_MEMBERS['M-CS1'] = { id: 'M-CS1', unitId: 'U-CS', name: '이씨에스', title: '매장CS팀장', phone: '010-3333-4444', companyEmail: 'cs.lee@daiso.co.kr', gmail: 'cs.lee@gmail.com', role: 'CLIENT', createdAt: now() };
 
     // 계약업체 전체 현황:
@@ -1015,10 +1042,69 @@
    *  ORG_MEMBERS/{M-…}  = 구성원 {unitId, name, title(직책), phone, companyEmail, gmail(로그인), role(SAFETY·CLIENT·NONE)}
    *  앱 로그인 권한은 예전처럼 STAFF/{로그인 Gmail} — 구성원을 저장할 때 자동으로 맞춤 (NONE이면 STAFF에서 뺌) */
   // 조직도에 오픈지원부(매장지원부문 산하) 및 영업지원부문 > 매장CS팀 반영
-  const ORG_SEED = [['U-EXEC', '경영진', '경영진', ''], ['U-SALES', '영업본부', '본부', ''], ['U-SSD', '매장지원부문', '부문', 'U-SALES'], ['U-OPEN', '오픈지원부', '부', 'U-SSD'], ['U-INT', '인테리어부', '부', 'U-SSD'],
+  const ORG_SEED = [
+    ['U-EXEC', '경영진', '경영진', ''],
+    ['U-SALES', '영업본부', '본부', ''],
+    ['U-SSD', '매장지원부문', '부문', 'U-SALES'],
+    ['U-OPEN', '오픈지원부', '부', 'U-SSD'],
+    ['U-OPEN-WEST', '수도권 서부지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-EAST', '수도권 동부지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-HONAM', '호남 오픈지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-YEONGNAM', '영남 오픈지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-RENEW-CAP', '수도권 리뉴얼팀', '팀', 'U-OPEN'],
+    ['U-OPEN-RENEW-LOCAL', '지방 리뉴얼팀', '팀', 'U-OPEN'],
+    ['U-INT', '인테리어부', '부', 'U-SSD'],
     ['U-INT1', '인테리어1팀', '팀', 'U-INT'], ['U-INT2', '인테리어2팀', '팀', 'U-INT'], ['U-NEW', '신축팀', '팀', 'U-INT'], ['U-FAC', '매장시설관리팀', '팀', 'U-INT'],
     ['U-CS-DIV', '영업지원부문', '부문', 'U-SALES'], ['U-CS', '매장CS팀', '팀', 'U-CS-DIV'],
     ['U-HR', '인사총무본부', '본부', ''], ['U-CUL', '기업문화관리부', '부', 'U-HR'], ['U-SAFE', '안전보건팀', '팀', 'U-CUL']].map(([id, name, kind, parent]) => ({ id, name, kind, parent }));
+  
+  /* 다이소 오픈지원부 6개 팀 29명 실무 운영 담당자 명단 (2026 현행 조직도 기준) */
+  const OPEN_SUPPORT_ROSTER = [
+    // 1. 수도권 서부지원팀 (7명)
+    { id: 'M-OPEN-JYS', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '진윤섭', title: '과장 (서부지원팀장)', phone: '010-3120-1001', companyEmail: 'jinys@daiso.co.kr', loginEmail: 'jinys@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-JEJ', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '주은정', title: '차장 (선임)', phone: '010-3120-1002', companyEmail: 'juej@daiso.co.kr', loginEmail: 'juej@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KYJ', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '김영진', title: '대리 (담당)', phone: '010-3120-1003', companyEmail: 'kimyj@daiso.co.kr', loginEmail: 'kimyj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-HYW', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '홍영웅', title: '사원 (팀원)', phone: '010-3120-1004', companyEmail: 'hongyw@daiso.co.kr', loginEmail: 'hongyw@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-LYJ', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '이유정', title: '사원 (팀원)', phone: '010-3120-1005', companyEmail: 'leeyj@daiso.co.kr', loginEmail: 'leeyj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KHM', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '김혜미', title: '사원 (팀원)', phone: '010-3120-1006', companyEmail: 'kimhm@daiso.co.kr', loginEmail: 'kimhm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-LSK', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '이승권', title: '사원 (팀원)', phone: '010-3120-1007', companyEmail: 'leesk@daiso.co.kr', loginEmail: 'leesk@daiso.test', role: 'STAFF' },
+
+    // 2. 수도권 동부지원팀 (6명)
+    { id: 'M-OPEN-KSR', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '김새롬', title: '대리 (동부지원팀장)', phone: '010-3120-2001', companyEmail: 'kimsr@daiso.co.kr', loginEmail: 'kimsr@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-JSY', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '전소영', title: '사원 (선임)', phone: '010-3120-2002', companyEmail: 'jeonsy@daiso.co.kr', loginEmail: 'jeonsy@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-HBM', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '황보민우', title: '사원 (팀원)', phone: '010-3120-2003', companyEmail: 'hwangbomw@daiso.co.kr', loginEmail: 'hwangbomw@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KYS', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '김윤식', title: '사원 (팀원)', phone: '010-3120-2004', companyEmail: 'kimys@daiso.co.kr', loginEmail: 'kimys@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KYJ2', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '곽예지', title: '사원 (팀원)', phone: '010-3120-2005', companyEmail: 'gwakyeji@daiso.co.kr', loginEmail: 'gwakyeji@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-JJH', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '정진희', title: '사원 (팀원)', phone: '010-3120-2006', companyEmail: 'jungjh@daiso.co.kr', loginEmail: 'jungjh@daiso.test', role: 'STAFF' },
+
+    // 3. 호남 오픈지원팀 (5명)
+    { id: 'M-OPEN-PJK', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '박주경', title: '과장 (호남오픈지원팀장兼)', phone: '010-3120-3001', companyEmail: 'parkjk@daiso.co.kr', loginEmail: 'parkjk@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-AJM', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '안종모', title: '과장 (선임)', phone: '010-3120-3002', companyEmail: 'ahnjm@daiso.co.kr', loginEmail: 'ahnjm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-SJJ', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '서정진', title: '사원 (팀원)', phone: '010-3120-3003', companyEmail: 'seojj@daiso.co.kr', loginEmail: 'seojj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-JDM', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '전동민', title: '사원 (팀원)', phone: '010-3120-3004', companyEmail: 'jeondm@daiso.co.kr', loginEmail: 'jeondm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-CJY', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '최지연', title: '사원 (팀원)', phone: '010-3120-3005', companyEmail: 'choijy@daiso.co.kr', loginEmail: 'choijy@daiso.test', role: 'STAFF' },
+
+    // 4. 영남 오픈지원팀 (6명)
+    { id: 'M-OPEN-NHJ', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '남희준', title: '과장 (영남오픈지원팀장)', phone: '010-3120-4001', companyEmail: 'namhj@daiso.co.kr', loginEmail: 'namhj@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-LHS', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '이현석', title: '사원 (선임)', phone: '010-3120-4002', companyEmail: 'leehs@daiso.co.kr', loginEmail: 'leehs@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-YKH1', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '윤경희', title: '사원 (팀원)', phone: '010-3120-4003', companyEmail: 'yoonkh@daiso.co.kr', loginEmail: 'yoonkh@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KSY', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '김수연', title: '사원 (팀원)', phone: '010-3120-4004', companyEmail: 'kimsy@daiso.co.kr', loginEmail: 'kimsy@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-PSJ', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '박수정', title: '사원 (팀원)', phone: '010-3120-4005', companyEmail: 'parksj@daiso.co.kr', loginEmail: 'parksj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-JWJ', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '정우재', title: '사원 (팀원)', phone: '010-3120-4006', companyEmail: 'jungwj@daiso.co.kr', loginEmail: 'jungwj@daiso.test', role: 'STAFF' },
+
+    // 5. 수도권 리뉴얼팀 (3명)
+    { id: 'M-OPEN-JKS', unitId: 'U-OPEN-RENEW-CAP', team: '수도권 리뉴얼팀', name: '장기선', title: '과장 (수도권리뉴얼팀장)', phone: '010-3120-5001', companyEmail: 'jangks@daiso.co.kr', loginEmail: 'jangks@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-SJM', unitId: 'U-OPEN-RENEW-CAP', team: '수도권 리뉴얼팀', name: '신정미', title: '차장 (선임)', phone: '010-3120-5002', companyEmail: 'shinjm@daiso.co.kr', loginEmail: 'shinjm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-BJY', unitId: 'U-OPEN-RENEW-CAP', team: '수도권 리뉴얼팀', name: '변준영', title: '사원 (팀원)', phone: '010-3120-5003', companyEmail: 'byunjy@daiso.co.kr', loginEmail: 'byunjy@daiso.test', role: 'STAFF' },
+
+    // 6. 지방 리뉴얼팀 (4명 - 박주경 과장 겸직)
+    { id: 'M-OPEN-PJK-D', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '박주경', title: '과장兼 (지방리뉴얼팀장 겸 호남팀장)', phone: '010-3120-3001', companyEmail: 'parkjk.local@daiso.co.kr', loginEmail: 'parkjk.local@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-HBW', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '홍병우', title: '과장 (선임)', phone: '010-3120-6002', companyEmail: 'hongbw@daiso.co.kr', loginEmail: 'hongbw@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-YKH2', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '윤경희', title: '사원 (팀원)', phone: '010-3120-6003', companyEmail: 'yoonkh.local@daiso.co.kr', loginEmail: 'yoonkh.local@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-CJI', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '최재이', title: '사원 (팀원)', phone: '010-3120-6004', companyEmail: 'choiji@daiso.co.kr', loginEmail: 'choiji@daiso.test', role: 'STAFF' }
+  ];
+  try { if (typeof window !== 'undefined') window.OPEN_SUPPORT_ROSTER = OPEN_SUPPORT_ROSTER; } catch (e) {}
+
   const ORG_KINDS = ['경영진', '본부', '부문', '부', '팀'], ORG_ROLE_OK = { SAFETY: 1, CLIENT: 1, NONE: 1 };
   const orgGate = (a) => { if (!isMaster(a)) fail('마스터 계정만 조직·구성원을 관리할 수 있습니다.'); };
   async function orgUnits() { const d = await db.collection('SETTINGS').doc('org').get().catch(() => null); return d && d.exists && Array.isArray(d.data().units) ? d.data().units : null; }

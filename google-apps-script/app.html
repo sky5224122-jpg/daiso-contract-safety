@@ -341,6 +341,27 @@ img,svg,video,iframe,canvas,table,select,input,textarea{max-width:100%}
   <div id="googleBtn"></div>
   <!-- 4대 도급 부서(오픈지원부 · 인테리어부 · 매장개선부 · 현장개선부) 원클릭 접속 패널 -->
   <div id="testLoginBox" style="margin-top:16px;padding:16px;background:#f0fdf4;border:2px solid #16a34a;border-radius:16px;text-align:left">
+        <!-- 오픈지원부 6개 팀 담당자 즉시 로그인 바 -->
+        <div style="margin:10px 0;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:8px 10px;text-align:left">
+          <div style="font-size:11.5px;font-weight:800;color:#15803d;margin-bottom:5px;display:flex;align-items:center;gap:4px">
+            <span>📦 오픈지원부 담당자 빠른 로그인 (작성자 등록 완료)</span>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            <button class="button xs" style="background:#16a34a;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px"
+              type="button" onclick="quickTestLogin('jinys@daiso.test','STAFF','OPEN')">⚡ 진윤섭 과장 (서부지원팀장)</button>
+            <button class="button xs" style="background:#0284c7;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px"
+              type="button" onclick="quickTestLogin('kimsr@daiso.test','STAFF','OPEN')">⚡ 김새롬 대리 (동부지원팀장)</button>
+            <button class="button xs" style="background:#d97706;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px"
+              type="button" onclick="quickTestLogin('parkjk@daiso.test','STAFF','OPEN')">⚡ 박주경 과장 (호남/지방리뉴얼)</button>
+            <button class="button xs" style="background:#7c3aed;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px"
+              type="button" onclick="quickTestLogin('namhj@daiso.test','STAFF','OPEN')">⚡ 남희준 과장 (영남지원팀장)</button>
+            <button class="button xs" style="background:#475569;color:#fff;font-weight:700;font-size:11px;padding:3px 8px;border-radius:6px"
+              type="button" onclick="quickTestLogin('jangks@daiso.test','STAFF','OPEN')">⚡ 장기선 과장 (수도권리뉴얼)</button>
+            <button class="button xs ghost" style="font-size:11px;padding:3px 6px;border-radius:6px"
+              type="button" onclick="openTestSwitchModal()">👥 6개 팀 29명 전체보기</button>
+          </div>
+        </div>
+        
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <b style="color:#0f172a;font-size:14px">⚡ 4대 핵심 도급 부서 원클릭 즉시 접속</b>
       <span style="background:#dcfce7;color:#15803d;font-size:11px;font-weight:900;padding:2px 8px;border-radius:99px">2026 실데이터 반영</span>
@@ -737,7 +758,34 @@ window.APP_CONFIG = {
       };
     });
     // 오픈지원부 및 매장CS팀 부서 담당자 샘플 구성원
-    store.ORG_MEMBERS['M-OPEN1'] = { id: 'M-OPEN1', unitId: 'U-OPEN', name: '김오픈', title: '오픈지원부장', phone: '010-1111-2222', companyEmail: 'open.kim@daiso.co.kr', gmail: 'open.kim@gmail.com', role: 'CLIENT', createdAt: now() };
+    // 오픈지원부 6개 팀 29명 실무 운영 담당자 등록
+    OPEN_SUPPORT_ROSTER.forEach((m) => {
+      store.STAFF[m.loginEmail] = {
+        id: m.loginEmail,
+        name: m.name,
+        dept: '오픈지원부 ' + m.team,
+        sector: 'OPEN',
+        role: 'STAFF',
+        companyEmail: m.companyEmail,
+        loginEmail: m.loginEmail,
+        active: 'Y',
+        title: m.title,
+        phone: m.phone,
+        createdBy: 'SYSTEM',
+        createdAt: now()
+      };
+      store.ORG_MEMBERS[m.id] = {
+        id: m.id,
+        unitId: m.unitId,
+        name: m.name,
+        title: m.title,
+        phone: m.phone,
+        companyEmail: m.companyEmail,
+        gmail: m.loginEmail,
+        role: 'STAFF',
+        createdAt: now()
+      };
+    });
     store.ORG_MEMBERS['M-CS1'] = { id: 'M-CS1', unitId: 'U-CS', name: '이씨에스', title: '매장CS팀장', phone: '010-3333-4444', companyEmail: 'cs.lee@daiso.co.kr', gmail: 'cs.lee@gmail.com', role: 'CLIENT', createdAt: now() };
 
     // 계약업체 전체 현황:
@@ -1438,10 +1486,69 @@ window.APP_CONFIG = {
    *  ORG_MEMBERS/{M-…}  = 구성원 {unitId, name, title(직책), phone, companyEmail, gmail(로그인), role(SAFETY·CLIENT·NONE)}
    *  앱 로그인 권한은 예전처럼 STAFF/{로그인 Gmail} — 구성원을 저장할 때 자동으로 맞춤 (NONE이면 STAFF에서 뺌) */
   // 조직도에 오픈지원부(매장지원부문 산하) 및 영업지원부문 > 매장CS팀 반영
-  const ORG_SEED = [['U-EXEC', '경영진', '경영진', ''], ['U-SALES', '영업본부', '본부', ''], ['U-SSD', '매장지원부문', '부문', 'U-SALES'], ['U-OPEN', '오픈지원부', '부', 'U-SSD'], ['U-INT', '인테리어부', '부', 'U-SSD'],
+  const ORG_SEED = [
+    ['U-EXEC', '경영진', '경영진', ''],
+    ['U-SALES', '영업본부', '본부', ''],
+    ['U-SSD', '매장지원부문', '부문', 'U-SALES'],
+    ['U-OPEN', '오픈지원부', '부', 'U-SSD'],
+    ['U-OPEN-WEST', '수도권 서부지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-EAST', '수도권 동부지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-HONAM', '호남 오픈지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-YEONGNAM', '영남 오픈지원팀', '팀', 'U-OPEN'],
+    ['U-OPEN-RENEW-CAP', '수도권 리뉴얼팀', '팀', 'U-OPEN'],
+    ['U-OPEN-RENEW-LOCAL', '지방 리뉴얼팀', '팀', 'U-OPEN'],
+    ['U-INT', '인테리어부', '부', 'U-SSD'],
     ['U-INT1', '인테리어1팀', '팀', 'U-INT'], ['U-INT2', '인테리어2팀', '팀', 'U-INT'], ['U-NEW', '신축팀', '팀', 'U-INT'], ['U-FAC', '매장시설관리팀', '팀', 'U-INT'],
     ['U-CS-DIV', '영업지원부문', '부문', 'U-SALES'], ['U-CS', '매장CS팀', '팀', 'U-CS-DIV'],
     ['U-HR', '인사총무본부', '본부', ''], ['U-CUL', '기업문화관리부', '부', 'U-HR'], ['U-SAFE', '안전보건팀', '팀', 'U-CUL']].map(([id, name, kind, parent]) => ({ id, name, kind, parent }));
+  
+  /* 다이소 오픈지원부 6개 팀 29명 실무 운영 담당자 명단 (2026 현행 조직도 기준) */
+  const OPEN_SUPPORT_ROSTER = [
+    // 1. 수도권 서부지원팀 (7명)
+    { id: 'M-OPEN-JYS', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '진윤섭', title: '과장 (서부지원팀장)', phone: '010-3120-1001', companyEmail: 'jinys@daiso.co.kr', loginEmail: 'jinys@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-JEJ', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '주은정', title: '차장 (선임)', phone: '010-3120-1002', companyEmail: 'juej@daiso.co.kr', loginEmail: 'juej@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KYJ', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '김영진', title: '대리 (담당)', phone: '010-3120-1003', companyEmail: 'kimyj@daiso.co.kr', loginEmail: 'kimyj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-HYW', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '홍영웅', title: '사원 (팀원)', phone: '010-3120-1004', companyEmail: 'hongyw@daiso.co.kr', loginEmail: 'hongyw@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-LYJ', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '이유정', title: '사원 (팀원)', phone: '010-3120-1005', companyEmail: 'leeyj@daiso.co.kr', loginEmail: 'leeyj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KHM', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '김혜미', title: '사원 (팀원)', phone: '010-3120-1006', companyEmail: 'kimhm@daiso.co.kr', loginEmail: 'kimhm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-LSK', unitId: 'U-OPEN-WEST', team: '수도권 서부지원팀', name: '이승권', title: '사원 (팀원)', phone: '010-3120-1007', companyEmail: 'leesk@daiso.co.kr', loginEmail: 'leesk@daiso.test', role: 'STAFF' },
+
+    // 2. 수도권 동부지원팀 (6명)
+    { id: 'M-OPEN-KSR', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '김새롬', title: '대리 (동부지원팀장)', phone: '010-3120-2001', companyEmail: 'kimsr@daiso.co.kr', loginEmail: 'kimsr@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-JSY', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '전소영', title: '사원 (선임)', phone: '010-3120-2002', companyEmail: 'jeonsy@daiso.co.kr', loginEmail: 'jeonsy@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-HBM', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '황보민우', title: '사원 (팀원)', phone: '010-3120-2003', companyEmail: 'hwangbomw@daiso.co.kr', loginEmail: 'hwangbomw@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KYS', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '김윤식', title: '사원 (팀원)', phone: '010-3120-2004', companyEmail: 'kimys@daiso.co.kr', loginEmail: 'kimys@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KYJ2', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '곽예지', title: '사원 (팀원)', phone: '010-3120-2005', companyEmail: 'gwakyeji@daiso.co.kr', loginEmail: 'gwakyeji@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-JJH', unitId: 'U-OPEN-EAST', team: '수도권 동부지원팀', name: '정진희', title: '사원 (팀원)', phone: '010-3120-2006', companyEmail: 'jungjh@daiso.co.kr', loginEmail: 'jungjh@daiso.test', role: 'STAFF' },
+
+    // 3. 호남 오픈지원팀 (5명)
+    { id: 'M-OPEN-PJK', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '박주경', title: '과장 (호남오픈지원팀장兼)', phone: '010-3120-3001', companyEmail: 'parkjk@daiso.co.kr', loginEmail: 'parkjk@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-AJM', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '안종모', title: '과장 (선임)', phone: '010-3120-3002', companyEmail: 'ahnjm@daiso.co.kr', loginEmail: 'ahnjm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-SJJ', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '서정진', title: '사원 (팀원)', phone: '010-3120-3003', companyEmail: 'seojj@daiso.co.kr', loginEmail: 'seojj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-JDM', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '전동민', title: '사원 (팀원)', phone: '010-3120-3004', companyEmail: 'jeondm@daiso.co.kr', loginEmail: 'jeondm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-CJY', unitId: 'U-OPEN-HONAM', team: '호남 오픈지원팀', name: '최지연', title: '사원 (팀원)', phone: '010-3120-3005', companyEmail: 'choijy@daiso.co.kr', loginEmail: 'choijy@daiso.test', role: 'STAFF' },
+
+    // 4. 영남 오픈지원팀 (6명)
+    { id: 'M-OPEN-NHJ', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '남희준', title: '과장 (영남오픈지원팀장)', phone: '010-3120-4001', companyEmail: 'namhj@daiso.co.kr', loginEmail: 'namhj@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-LHS', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '이현석', title: '사원 (선임)', phone: '010-3120-4002', companyEmail: 'leehs@daiso.co.kr', loginEmail: 'leehs@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-YKH1', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '윤경희', title: '사원 (팀원)', phone: '010-3120-4003', companyEmail: 'yoonkh@daiso.co.kr', loginEmail: 'yoonkh@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-KSY', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '김수연', title: '사원 (팀원)', phone: '010-3120-4004', companyEmail: 'kimsy@daiso.co.kr', loginEmail: 'kimsy@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-PSJ', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '박수정', title: '사원 (팀원)', phone: '010-3120-4005', companyEmail: 'parksj@daiso.co.kr', loginEmail: 'parksj@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-JWJ', unitId: 'U-OPEN-YEONGNAM', team: '영남 오픈지원팀', name: '정우재', title: '사원 (팀원)', phone: '010-3120-4006', companyEmail: 'jungwj@daiso.co.kr', loginEmail: 'jungwj@daiso.test', role: 'STAFF' },
+
+    // 5. 수도권 리뉴얼팀 (3명)
+    { id: 'M-OPEN-JKS', unitId: 'U-OPEN-RENEW-CAP', team: '수도권 리뉴얼팀', name: '장기선', title: '과장 (수도권리뉴얼팀장)', phone: '010-3120-5001', companyEmail: 'jangks@daiso.co.kr', loginEmail: 'jangks@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-SJM', unitId: 'U-OPEN-RENEW-CAP', team: '수도권 리뉴얼팀', name: '신정미', title: '차장 (선임)', phone: '010-3120-5002', companyEmail: 'shinjm@daiso.co.kr', loginEmail: 'shinjm@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-BJY', unitId: 'U-OPEN-RENEW-CAP', team: '수도권 리뉴얼팀', name: '변준영', title: '사원 (팀원)', phone: '010-3120-5003', companyEmail: 'byunjy@daiso.co.kr', loginEmail: 'byunjy@daiso.test', role: 'STAFF' },
+
+    // 6. 지방 리뉴얼팀 (4명 - 박주경 과장 겸직)
+    { id: 'M-OPEN-PJK-D', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '박주경', title: '과장兼 (지방리뉴얼팀장 겸 호남팀장)', phone: '010-3120-3001', companyEmail: 'parkjk.local@daiso.co.kr', loginEmail: 'parkjk.local@daiso.test', role: 'STAFF', isLeader: true },
+    { id: 'M-OPEN-HBW', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '홍병우', title: '과장 (선임)', phone: '010-3120-6002', companyEmail: 'hongbw@daiso.co.kr', loginEmail: 'hongbw@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-YKH2', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '윤경희', title: '사원 (팀원)', phone: '010-3120-6003', companyEmail: 'yoonkh.local@daiso.co.kr', loginEmail: 'yoonkh.local@daiso.test', role: 'STAFF' },
+    { id: 'M-OPEN-CJI', unitId: 'U-OPEN-RENEW-LOCAL', team: '지방 리뉴얼팀', name: '최재이', title: '사원 (팀원)', phone: '010-3120-6004', companyEmail: 'choiji@daiso.co.kr', loginEmail: 'choiji@daiso.test', role: 'STAFF' }
+  ];
+  try { if (typeof window !== 'undefined') window.OPEN_SUPPORT_ROSTER = OPEN_SUPPORT_ROSTER; } catch (e) {}
+
   const ORG_KINDS = ['경영진', '본부', '부문', '부', '팀'], ORG_ROLE_OK = { SAFETY: 1, CLIENT: 1, NONE: 1 };
   const orgGate = (a) => { if (!isMaster(a)) fail('마스터 계정만 조직·구성원을 관리할 수 있습니다.'); };
   async function orgUnits() { const d = await db.collection('SETTINGS').doc('org').get().catch(() => null); return d && d.exists && Array.isArray(d.data().units) ? d.data().units : null; }
@@ -5822,6 +5929,120 @@ function renderServiceManagement(el) {
 function renderSvcOpen(sub, d) {
   const totalOpenCap = d.openVendors.reduce((acc, v) => acc + (Number(v.maxCap) || 0), 0);
   sub.innerHTML = `
+    <!-- [오픈지원부 6개 팀 29명 실무 운영 조직도 (사용자 전달 공식 조직표)] -->
+    <div class="card" style="background:#ffffff;border:2px solid #0284c7;margin-bottom:14px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.07)">
+      <div class="card-h" style="background:#f0f9ff;border-bottom:1px solid #bae6fd;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-weight:900;font-size:14px;color:#0369a1">👥 오픈지원부 현행 실무 조직도 (6개 팀 29명 · 로그인 작성 담당자 등록 완료)</span>
+        <button class="button xs" style="background:#0284c7;color:#fff;font-weight:700;padding:3px 10px;border-radius:6px" onclick="openTestSwitchModal()">⚡ 담당자 계정 전환</button>
+      </div>
+      <div class="card-b" style="padding:12px">
+        <p style="font-size:12px;color:#475569;margin:0 0 10px">
+          💡 각 팀을 클릭하거나 우측 상단 <b>[⚡ 담당자 계정 전환]</b> 버튼을 누르면 해당 팀장 및 실무 담당자로 즉시 로그인하여 점검표를 작성할 수 있습니다.
+        </p>
+
+        <!-- 6개 팀 카드 그리드 (사용자 업로드 조직도 이미지와 100% 동일한 배치) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px">
+          
+          <!-- 1. 수도권 서부지원팀 -->
+          <div style="border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="background:#e2e8f0;padding:6px;text-align:center;font-weight:800;font-size:12.5px;color:#1e293b;border-bottom:1px solid #cbd5e1">
+              수도권<br>서부지원팀
+            </div>
+            <div style="padding:6px;text-align:center;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:800;font-size:12px;color:#0f172a">
+              <button class="button xs ghost" style="padding:1px 4px;font-size:11.5px;font-weight:800;color:#0284c7" onclick="quickTestLogin('jinys@daiso.test','STAFF','OPEN')">진윤섭 과장 ⚡</button>
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9">
+              주은정 차장<br>김영진 대리
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#15803d;font-weight:700;text-align:center;background:#fcfdfd">
+              홍영웅 사원<br>이유정 사원<br>김혜미 사원<br>이승권 사원
+            </div>
+          </div>
+
+          <!-- 2. 수도권 동부지원팀 -->
+          <div style="border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="background:#e2e8f0;padding:6px;text-align:center;font-weight:800;font-size:12.5px;color:#1e293b;border-bottom:1px solid #cbd5e1">
+              수도권<br>동부지원팀
+            </div>
+            <div style="padding:6px;text-align:center;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:800;font-size:12px;color:#0f172a">
+              <button class="button xs ghost" style="padding:1px 4px;font-size:11.5px;font-weight:800;color:#0284c7" onclick="quickTestLogin('kimsr@daiso.test','STAFF','OPEN')">김새롬 대리 ⚡</button>
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9">
+              전소영 사원
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#15803d;font-weight:700;text-align:center;background:#fcfdfd">
+              황보민우 사원<br>김윤식 사원<br>곽예지 사원<br>정진희 사원
+            </div>
+          </div>
+
+          <!-- 3. 호남 오픈지원팀 -->
+          <div style="border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="background:#e2e8f0;padding:6px;text-align:center;font-weight:800;font-size:12.5px;color:#1e293b;border-bottom:1px solid #cbd5e1">
+              호남<br>오픈지원팀
+            </div>
+            <div style="padding:6px;text-align:center;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:800;font-size:12px;color:#0f172a">
+              <button class="button xs ghost" style="padding:1px 4px;font-size:11.5px;font-weight:800;color:#0284c7" onclick="quickTestLogin('parkjk@daiso.test','STAFF','OPEN')">박주경 과장 ⚡</button>
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9">
+              안종모 과장
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#15803d;font-weight:700;text-align:center;background:#fcfdfd">
+              서정진 사원<br>전동민 사원<br>최지연 사원
+            </div>
+          </div>
+
+          <!-- 4. 영남 오픈지원팀 -->
+          <div style="border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="background:#e2e8f0;padding:6px;text-align:center;font-weight:800;font-size:12.5px;color:#1e293b;border-bottom:1px solid #cbd5e1">
+              영남<br>오픈지원팀
+            </div>
+            <div style="padding:6px;text-align:center;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:800;font-size:12px;color:#0f172a">
+              <button class="button xs ghost" style="padding:1px 4px;font-size:11.5px;font-weight:800;color:#0284c7" onclick="quickTestLogin('namhj@daiso.test','STAFF','OPEN')">남희준 과장 ⚡</button>
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9">
+              이현석 사원
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#15803d;font-weight:700;text-align:center;background:#fcfdfd">
+              윤경희 사원<br>김수연 사원<br>박수정 사원<br>정우재 사원
+            </div>
+          </div>
+
+          <!-- 5. 수도권 리뉴얼팀 -->
+          <div style="border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="background:#e2e8f0;padding:6px;text-align:center;font-weight:800;font-size:12.5px;color:#1e293b;border-bottom:1px solid #cbd5e1">
+              수도권<br>리뉴얼팀
+            </div>
+            <div style="padding:6px;text-align:center;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-weight:800;font-size:12px;color:#0f172a">
+              <button class="button xs ghost" style="padding:1px 4px;font-size:11.5px;font-weight:800;color:#0284c7" onclick="quickTestLogin('jangks@daiso.test','STAFF','OPEN')">장기선 과장 ⚡</button>
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9">
+              신정미 차장
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#15803d;font-weight:700;text-align:center;background:#fcfdfd">
+              변준영 사원
+            </div>
+          </div>
+
+          <!-- 6. 지방 리뉴얼팀 (헤더 주황, 박주경 과장겸 하늘색) -->
+          <div style="border:1.5px solid #f59e0b;border-radius:8px;overflow:hidden;background:#fff">
+            <div style="background:#f59e0b;padding:6px;text-align:center;font-weight:900;font-size:12.5px;color:#ffffff;border-bottom:1px solid #d97706">
+              지방<br>리뉴얼팀
+            </div>
+            <div style="padding:6px;text-align:center;background:#e0f2fe;border-bottom:1px solid #bae6fd;font-weight:800;font-size:12px;color:#0369a1">
+              <button class="button xs ghost" style="padding:1px 4px;font-size:11.5px;font-weight:900;color:#0369a1" onclick="quickTestLogin('parkjk.local@daiso.test','STAFF','OPEN')">박주경 과장兼 ⚡</button>
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#334155;text-align:center;border-bottom:1px solid #f1f5f9">
+              홍병우 과장
+            </div>
+            <div style="padding:6px;font-size:11px;line-height:1.6;color:#15803d;font-weight:700;text-align:center;background:#fcfdfd">
+              윤경희 사원<br>최재이 사원
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <!-- [오픈지원부 사내 안전보건 표준 지침서 & 조직도 & 2026 인원산출기준표 (공식문서 전수 반영)] -->
     <div class="card" style="background:#f8fafc;border:2px solid #3b82f6;margin-bottom:14px">
       <div class="card-h" style="background:#eff6ff">
@@ -6198,8 +6419,57 @@ function renderSvcField(sub, d) {
             <input class="inp" type="date" value="${esc(fi.meta.inspDate)}" onchange="updateFieldMeta('inspDate', this.value)">
           </div>
           <div>
-            <label style="font-size:11px;font-weight:800;color:#475569;display:block;margin-bottom:4px">점검자 (안전보건팀)</label>
-            <input class="inp" value="${esc(fi.meta.inspector)}" onchange="updateFieldMeta('inspector', this.value)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <label style="font-size:11px;font-weight:800;color:#475569">점검자 (작성 담당자)</label>
+              <select style="font-size:10.5px;padding:1px 4px;border:1px solid #cbd5e1;border-radius:4px;background:#f8fafc"
+                onchange="if(this.value){updateFieldMeta('inspector', this.value);renderSvcUI();}">
+                <option value="">-- 오픈지원부 담당자 선택 --</option>
+                <optgroup label="수도권 서부지원팀">
+                  <option value="오픈지원부 서부지원팀장 진윤섭 과장">진윤섭 과장 (서부지원팀장)</option>
+                  <option value="오픈지원부 주은정 차장">주은정 차장 (선임)</option>
+                  <option value="오픈지원부 김영진 대리">김영진 대리 (담당)</option>
+                  <option value="오픈지원부 홍영웅 사원">홍영웅 사원</option>
+                  <option value="오픈지원부 이유정 사원">이유정 사원</option>
+                  <option value="오픈지원부 김혜미 사원">김혜미 사원</option>
+                  <option value="오픈지원부 이승권 사원">이승권 사원</option>
+                </optgroup>
+                <optgroup label="수도권 동부지원팀">
+                  <option value="오픈지원부 동부지원팀장 김새롬 대리">김새롬 대리 (동부지원팀장)</option>
+                  <option value="오픈지원부 전소영 사원">전소영 사원 (선임)</option>
+                  <option value="오픈지원부 황보민우 사원">황보민우 사원</option>
+                  <option value="오픈지원부 김윤식 사원">김윤식 사원</option>
+                  <option value="오픈지원부 곽예지 사원">곽예지 사원</option>
+                  <option value="오픈지원부 정진희 사원">정진희 사원</option>
+                </optgroup>
+                <optgroup label="호남 오픈지원팀">
+                  <option value="오픈지원부 호남지원팀장 박주경 과장">박주경 과장 (호남팀장겸)</option>
+                  <option value="오픈지원부 안종모 과장">안종모 과장 (선임)</option>
+                  <option value="오픈지원부 서정진 사원">서정진 사원</option>
+                  <option value="오픈지원부 전동민 사원">전동민 사원</option>
+                  <option value="오픈지원부 최지연 사원">최지연 사원</option>
+                </optgroup>
+                <optgroup label="영남 오픈지원팀">
+                  <option value="오픈지원부 영남지원팀장 남희준 과장">남희준 과장 (영남팀장)</option>
+                  <option value="오픈지원부 이현석 사원">이현석 사원 (선임)</option>
+                  <option value="오픈지원부 윤경희 사원">윤경희 사원</option>
+                  <option value="오픈지원부 김수연 사원">김수연 사원</option>
+                  <option value="오픈지원부 박수정 사원">박수정 사원</option>
+                  <option value="오픈지원부 정우재 사원">정우재 사원</option>
+                </optgroup>
+                <optgroup label="수도권 리뉴얼팀">
+                  <option value="오픈지원부 수도권리뉴얼팀장 장기선 과장">장기선 과장 (리뉴얼팀장)</option>
+                  <option value="오픈지원부 신정미 차장">신정미 차장 (선임)</option>
+                  <option value="오픈지원부 변준영 사원">변준영 사원</option>
+                </optgroup>
+                <optgroup label="지방 리뉴얼팀">
+                  <option value="오픈지원부 지방리뉴얼팀장 박주경 과장兼">박주경 과장兼 (지방리뉴얼팀장)</option>
+                  <option value="오픈지원부 홍병우 과장">홍병우 과장 (선임)</option>
+                  <option value="오픈지원부 윤경희 사원">윤경희 사원</option>
+                  <option value="오픈지원부 최재이 사원">최재이 사원</option>
+                </optgroup>
+              </select>
+            </div>
+            <input class="inp" id="fieldInspectorInp" value="${esc(fi.meta.inspector || (state&&state.staff ? state.staff.dept + ' ' + state.staff.name + ' ' + (state.staff.title||'') : '안전보건팀 강동현'))}" onchange="updateFieldMeta('inspector', this.value)">
           </div>
           <div>
             <label style="font-size:11px;font-weight:800;color:#475569;display:block;margin-bottom:4px">점검 대상 업체</label>
@@ -7311,7 +7581,7 @@ function executeMobGenerateReport() {
   const scope = document.getElementById('mobWorkScope')?.value || 'OPEN';
   const vendor = document.getElementById('mobVendorName')?.value || '수급업체';
   const date = document.getElementById('mobInspDate')?.value || new Date().toISOString().slice(0, 10);
-  const inspector = document.getElementById('mobInspector')?.value || '안전보건팀 강동현';
+  const inspector = document.getElementById('mobInspector')?.value || (state && state.staff ? (state.staff.dept ? state.staff.dept + ' ' : '') + state.staff.name + ' ' + (state.staff.title || '') : '안전보건팀 강동현');
   const rawText = document.getElementById('mobMemoText')?.value.trim() || '';
 
   if (!rawText && !g_mobPhotos.length) {
@@ -8709,8 +8979,47 @@ async function quickTestLogin(email,mode,presetSector){
 function openTestSwitchModal(){
  $('testSwitchDlg')?.remove();
  const curEmail=(state&&state.email)||'';
+ const openRoster = (window.OPEN_SUPPORT_ROSTER||[
+  {team:'수도권 서부지원팀',name:'진윤섭',title:'과장 (서부지원팀장)',loginEmail:'jinys@daiso.test',isLeader:true},
+  {team:'수도권 서부지원팀',name:'주은정',title:'차장 (선임)',loginEmail:'juej@daiso.test'},
+  {team:'수도권 서부지원팀',name:'김영진',title:'대리 (담당)',loginEmail:'kimyj@daiso.test'},
+  {team:'수도권 서부지원팀',name:'홍영웅',title:'사원',loginEmail:'hongyw@daiso.test'},
+  {team:'수도권 서부지원팀',name:'이유정',title:'사원',loginEmail:'leeyj@daiso.test'},
+  {team:'수도권 서부지원팀',name:'김혜미',title:'사원',loginEmail:'kimhm@daiso.test'},
+  {team:'수도권 서부지원팀',name:'이승권',title:'사원',loginEmail:'leesk@daiso.test'},
+
+  {team:'수도권 동부지원팀',name:'김새롬',title:'대리 (동부지원팀장)',loginEmail:'kimsr@daiso.test',isLeader:true},
+  {team:'수도권 동부지원팀',name:'전소영',title:'사원 (선임)',loginEmail:'jeonsy@daiso.test'},
+  {team:'수도권 동부지원팀',name:'황보민우',title:'사원',loginEmail:'hwangbomw@daiso.test'},
+  {team:'수도권 동부지원팀',name:'김윤식',title:'사원',loginEmail:'kimys@daiso.test'},
+  {team:'수도권 동부지원팀',name:'곽예지',title:'사원',loginEmail:'gwakyeji@daiso.test'},
+  {team:'수도권 동부지원팀',name:'정진희',title:'사원',loginEmail:'jungjh@daiso.test'},
+
+  {team:'호남 오픈지원팀',name:'박주경',title:'과장 (호남팀장兼)',loginEmail:'parkjk@daiso.test',isLeader:true},
+  {team:'호남 오픈지원팀',name:'안종모',title:'과장 (선임)',loginEmail:'ahnjm@daiso.test'},
+  {team:'호남 오픈지원팀',name:'서정진',title:'사원',loginEmail:'seojj@daiso.test'},
+  {team:'호남 오픈지원팀',name:'전동민',title:'사원',loginEmail:'jeondm@daiso.test'},
+  {team:'호남 오픈지원팀',name:'최지연',title:'사원',loginEmail:'choijy@daiso.test'},
+
+  {team:'영남 오픈지원팀',name:'남희준',title:'과장 (영남팀장)',loginEmail:'namhj@daiso.test',isLeader:true},
+  {team:'영남 오픈지원팀',name:'이현석',title:'사원 (선임)',loginEmail:'leehs@daiso.test'},
+  {team:'영남 오픈지원팀',name:'윤경희',title:'사원',loginEmail:'yoonkh@daiso.test'},
+  {team:'영남 오픈지원팀',name:'김수연',title:'사원',loginEmail:'kimsy@daiso.test'},
+  {team:'영남 오픈지원팀',name:'박수정',title:'사원',loginEmail:'parksj@daiso.test'},
+  {team:'영남 오픈지원팀',name:'정우재',title:'사원',loginEmail:'jungwj@daiso.test'},
+
+  {team:'수도권 리뉴얼팀',name:'장기선',title:'과장 (수도권리뉴얼팀장)',loginEmail:'jangks@daiso.test',isLeader:true},
+  {team:'수도권 리뉴얼팀',name:'신정미',title:'차장 (선임)',loginEmail:'shinjm@daiso.test'},
+  {team:'수도권 리뉴얼팀',name:'변준영',title:'사원',loginEmail:'byunjy@daiso.test'},
+
+  {team:'지방 리뉴얼팀',name:'박주경',title:'과장兼 (지방리뉴얼팀장)',loginEmail:'parkjk.local@daiso.test',isLeader:true},
+  {team:'지방 리뉴얼팀',name:'홍병우',title:'과장 (선임)',loginEmail:'hongbw@daiso.test'},
+  {team:'지방 리뉴얼팀',name:'윤경희',title:'사원',loginEmail:'yoonkh.local@daiso.test'},
+  {team:'지방 리뉴얼팀',name:'최재이',title:'사원',loginEmail:'choiji@daiso.test'}
+ ]);
+
  const accounts=[
-  ['STAFF','sky5224122@gmail.com','👨‍💼 강동현 (다이소 담당자 · 업종 선택 화면 진입)','로그인 후 [인테리어/공사/집기] 또는 [오픈지원/입고/재고] 선택 진입'],
+  ['STAFF','sky5224122@gmail.com','👨‍💼 강동현 (안전보건팀 총괄 · 부서 선택 진입)','로그인 후 [인테리어부] [매장개선부] [오픈지원부] [현장개선부] 선택 가능'],
   ['VENDOR','kworks@vendor.test','👷 케이웍스코리아 (오픈지원 80점·입고도우미 81점 · 전국 160명)','오픈지원 진열·입고 및 매장CS 입고도우미 겸업'],
   ['VENDOR','adegg@vendor.test','👷 에드에그 (오픈지원 진열용역 · 전국 100명 · 90점 S)','강남본점 800평 리뉴얼 오픈 진열용역 배정'],
   ['VENDOR','uni@vendor.test','👷 유엔아이 (오픈지원 진열용역 · 수도권/충청/중호 120명 · 79점 B)','대전둔산점 500평 신규오픈 진열용역 (보호구·비상훈련 점검)'],
@@ -8724,20 +9033,71 @@ function openTestSwitchModal(){
   ['VENDOR','yeowoo@vendor.test','🛠 예우시스템 (매장개선부 집기 89점 A)','상품 진열대(곤돌라) 및 벽면 선반 설치·보수·철거'],
   ['VENDOR','sigong@vendor.test','👷 (주)시공디자인 (인테리어팀 마감공사 · 92점 S)','인테리어/공사/집기 대표 시공사 · 강남본점 800평 리뉴얼']
  ];
+
  const bg=document.createElement('div');bg.id='testSwitchDlg';bg.setAttribute('role','dialog');bg.setAttribute('aria-modal','true');
- bg.style.cssText='position:fixed;inset:0;z-index:88;background:rgba(15,23,42,.6);display:flex;align-items:center;justify-content:center;padding:16px';
- bg.innerHTML='<div class="card" style="max-width:560px;width:100%;max-height:90vh;overflow:auto;margin:0;padding:18px">'
-  +'<div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px"><h2 style="margin:0;font-size:17px">🔄 시점 전환 (담당자 ↔ 오픈5사·CS9사·인테리어)</h2><button class="button ghost" type="button" style="padding:4px 10px" onclick="$(\'testSwitchDlg\')?.remove()">✕ 닫기</button></div>'
-  +'<p class="muted" style="margin:0 0 12px;font-size:12.5px">현재 접속: <b>'+escapeText(curEmail||'미로그인')+'</b> · 클릭 즉시 해당 계정 시점으로 화면이 전환됩니다.</p>'
-  +'<div style="display:grid;gap:7px">'+accounts.map(([m,em,title,sub])=>{
-   const on=curEmail.toLowerCase()===em.toLowerCase();
-   return '<button type="button" class="button '+(on?'':'ghost')+'" style="text-align:left;padding:9px 12px;display:block;width:100%;'+(on?'border:2px solid #1d4ed8':'')+'" onclick="quickTestLogin(\''+em+'\',\''+m+'\')">'
-    +'<div style="display:flex;justify-content:space-between;align-items:center"><b>'+escapeText(title)+'</b>'+(on?'<span class="pill ok">현재 접속</span>':'<span style="font-size:11px;color:#64748b">'+escapeText(em)+' ›</span>')+'</div>'
-    +'<div style="font-size:11.5px;opacity:.85;margin-top:3px;font-weight:400">'+escapeText(sub)+'</div></button>';
-  }).join('')+'</div>'
-  +'<div class="row" style="margin-top:12px;justify-content:space-between"><button type="button" class="button ghost danger" style="font-size:12px;padding:7px 12px" onclick="if(confirm(\'시뮬레이션 DB를 초기 표준 상태로 되돌릴까요?\')){FB.resetSim();quickTestLogin(\'sky5224122@gmail.com\',\'STAFF\')}">🧹 테스트 데이터 초기화</button><button type="button" class="button ghost" style="font-size:12px;padding:7px 14px" onclick="$(\'testSwitchDlg\')?.remove()">닫기</button></div></div>';
+ bg.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.65);display:flex;align-items:center;justify-content:center;padding:12px';
+
+ const teams = ['수도권 서부지원팀', '수도권 동부지원팀', '호남 오픈지원팀', '영남 오픈지원팀', '수도권 리뉴얼팀', '지방 리뉴얼팀'];
+ let openHtml = '';
+ teams.forEach(tName => {
+  const members = openRoster.filter(x => x.team === tName);
+  const leader = members.find(x => x.isLeader) || members[0];
+  openHtml += `
+   <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin-bottom:6px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+     <span style="font-weight:800;font-size:12.5px;color:#0f172a">📦 ${escapeText(tName)} (${members.length}명)</span>
+     <button class="button xs" style="background:#0284c7;color:#fff;font-weight:700;padding:2px 8px;font-size:11px;border-radius:6px"
+      onclick="quickTestLogin('${leader.loginEmail}','STAFF','OPEN')">⚡ 팀장(${escapeText(leader.name)}) 로그인</button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px">
+     ${members.map(m => `
+      <button class="button xs ${m.isLeader?'':'ghost'}" style="font-size:11px;padding:2px 6px;border-radius:5px;${m.loginEmail===curEmail?'border:2px solid #0284c7;background:#e0f2fe;font-weight:800':''}"
+       onclick="quickTestLogin('${m.loginEmail}','STAFF','OPEN')">
+       ${m.isLeader?'👑 ':''}${escapeText(m.name)} ${escapeText(m.title.split(' ')[0])}
+      </button>
+     `).join('')}
+    </div>
+   </div>
+  `;
+ });
+
+ bg.innerHTML=`
+  <div class="card" style="max-width:680px;width:100%;max-height:92vh;overflow-y:auto;margin:0;padding:16px;border-radius:16px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.3)">
+   <div class="row" style="justify-content:space-between;align-items:flex-start;border-bottom:1px solid #e2e8f0;padding-bottom:10px;margin-bottom:12px">
+    <div>
+     <h3 style="margin:0;font-size:16px;font-weight:800;color:#0f172a">⚡ 빠른 시험 계정 전환 (다이소 담당자 · 협력업체)</h3>
+     <p class="muted" style="margin:2px 0 0;font-size:11.5px">원하는 직책/업체를 누르면 암호 없이 즉시 해당 계정 권한으로 진입합니다.</p>
+    </div>
+    <button class="button ghost xs" onclick="$('testSwitchDlg').remove()" style="font-size:15px;padding:2px 8px">✕</button>
+   </div>
+
+   <div style="margin-bottom:12px">
+    <div style="font-size:12.5px;font-weight:800;color:#0284c7;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+     <span>📦 다이소 오픈지원부 실무 작성 담당자 (6개 팀 29명)</span>
+     <span style="font-size:11px;font-weight:normal;color:#64748b">클릭 시 [오픈지원부 진열·입고 5개사] 화면 자동 진입</span>
+    </div>
+    ${openHtml}
+   </div>
+
+   <div style="margin-bottom:10px">
+    <div style="font-size:12.5px;font-weight:800;color:#475569;margin-bottom:6px">🏢 안전보건팀 총괄 및 주요 협력업체 (13개사)</div>
+    <div style="display:flex;flex-direction:column;gap:5px">
+     ${accounts.map(([md,em,label,desc])=>`
+      <button class="button ghost" style="text-align:left;display:flex;flex-direction:column;align-items:flex-start;padding:6px 10px;border-radius:8px;border:1px solid ${em===curEmail?'#0284c7':'#cbd5e1'};background:${em===curEmail?'#f0f9ff':'#fff'}"
+       onclick="quickTestLogin('${em}','${md}','${em.includes('daiso')?'':''}')">
+       <div style="font-size:12px;font-weight:800;color:#1e293b">${escapeText(label)} ${em===curEmail?'<span style="color:#0284c7;font-size:10.5px">(현재 접속 중)</span>':''}</div>
+       <div style="font-size:11px;color:#64748b">${escapeText(desc)}</div>
+      </button>
+     `).join('')}
+    </div>
+   </div>
+
+   <div style="text-align:right;margin-top:8px">
+    <button class="button secondary xs" onclick="$('testSwitchDlg').remove()">닫기</button>
+   </div>
+  </div>
+ `;
  document.body.appendChild(bg);
- bg.onclick=e=>{if(e.target===bg)bg.remove()};
 }
 /* ---------- v5.18 휴대폰 로그인: 앱 안 화면 확인 ----------
  *  카카오톡·네이버·밴드·인스타·페이스북·라인·회사 메일 앱 안에서 열린 화면은 구글이 로그인을 막음 (403 disallowed_useragent)
